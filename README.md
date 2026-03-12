@@ -1,6 +1,6 @@
 # Notes App
 
-A full-stack notes application for documenting things you learn. Posts are composed of a title and ordered sections, each with a headline and content.
+A full-stack notes application for documenting things I learn in development. For me myself and I.
 
 ## Stack
 
@@ -44,20 +44,6 @@ cd frontend
 npm install
 npm run dev          # starts on http://localhost:3000
 ```
-
-## API
-
-| Method | Endpoint | Description |
-|---|---|---|
-| GET | `/api/posts` | List all posts |
-| POST | `/api/posts` | Create post |
-| GET | `/api/posts/:id` | Get post with sections |
-| PUT | `/api/posts/:id` | Update post title |
-| DELETE | `/api/posts/:id` | Delete post |
-| POST | `/api/posts/:id/sections` | Add section |
-| PUT | `/api/posts/:id/sections/:sectionId` | Update section |
-| DELETE | `/api/posts/:id/sections/:sectionId` | Delete section |
-| PUT | `/api/posts/:id/sections/reorder` | Reorder sections |
 
 ## Scripts
 
