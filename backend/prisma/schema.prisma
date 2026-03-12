@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Group {
+  id        Int      @id @default(autoincrement())
+  name      String
+  posts     Post[]
+  createdAt DateTime @default(now())
+}
+
+model Post {
+  id        Int       @id @default(autoincrement())
+  title     String
+  groupId   Int?
+  group     Group?    @relation(fields: [groupId], references: [id])
+  sections  Section[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Section {
+  id        Int    @id @default(autoincrement())
+  headline  String
+  content   String
+  order     Float  @default(0)
+  postId    Int
+  post      Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+}

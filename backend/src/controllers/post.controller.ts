@@ -1,0 +1,100 @@
+import { Request, Response, NextFunction } from 'express'
+import { prisma } from '../lib/prisma'
+import { AppError } from '../middleware/errorHandler'
+import { CreatePostInput, UpdatePostInput } from '../dtos/post.dto'
+
+export async function getAllPosts(_req: Request, res: Response, next: NextFunction) {
+  try {
+    const posts = await prisma.post.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: { _count: { select: { sections: true } } },
+    })
+    res.json(posts)
+  } catch (err) {
+    next(err)
+  }
+}
+
+export async function getPostById(req: Request, res: Response, next: NextFunction) {
+  try {
+    const id = Number(req.params.id)
+
+    const post = await prisma.post.findUnique({
+      where: { id },
+      include: { sections: { orderBy: { order: 'asc' } } },
+    })
+
+    if (!post) {
+      throw new AppError(404, 'Post not found')
+    }
+
+    res.json(post)
+  } catch (err) {
+    next(err)
+  }
+}
+
+export async function createPost(req: Request, res: Response, next: NextFunction) {
+  try {
+    const body = req.body as CreatePostInput
+    
+    const post = await prisma.post.create({
+      data: {
+        title: body.title,
+        groupId: body.groupId ?? null,
+        sections: body.sections
+          ? {
+              create: body.sections.map((s, i) => ({
+                headline: s.headline,
+                content: s.content,
+                order: (i + 1) * 1.0,
+              })),
+            }
+          : undefined,
+      },
+      include: { sections: { orderBy: { order: 'asc' } } },
+    })
+
+    res.status(201).json(post)
+  } catch (err) {
+    next(err)
+  }
+}
+
+export async function updatePost(req: Request, res: Response, next: NextFunction) {
+  try {
+    const id = Number(req.params.id)
+    const body = req.body as UpdatePostInput
+    const existing = await prisma.post.findUnique({ where: { id } })
+    if (!existing) {
+      throw new AppError(404, 'Post not found')
+    }
+
+    const post = await prisma.post.update({
+      where: { id },
+      data: { title: body.title, ...(body.groupId !== undefined && { groupId: body.groupId }) },
+      include: { sections: { orderBy: { order: 'asc' } } },
+    })
+
+    res.json(post)
+  } catch (err) {
+    next(err)
+  }
+}
+
+export async function deletePost(req: Request, res: Response, next: NextFunction) {
+  try {
+    const id = Number(req.params.id)
+    const existing = await prisma.post.findUnique({ where: { id } })
+
+    if (!existing) {
+      throw new AppError(404, 'Post not found')
+    }
+
+    await prisma.post.delete({ where: { id } })
+    
+    res.status(204).send()
+  } catch (err) {
+    next(err)
+  }
+}
