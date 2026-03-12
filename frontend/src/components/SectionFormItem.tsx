@@ -33,7 +33,7 @@ export const SectionFormItem = ({
     <div
       ref={provided.innerRef}
       {...provided.draggableProps}
-      className="group relative flex gap-2 items-start py-4 border-b border-border last:border-b-0"
+      className="group relative flex gap-2 items-start pt-8 pb-12 border-b border-border last:border-b-0"
     >
       <div
         // eslint-disable-next-line react-hooks/refs
@@ -48,13 +48,13 @@ export const SectionFormItem = ({
           type="text"
           placeholder="Section headline"
           value={section.headline}
-          onChange={(e) => onChange(section.id, 'headline', e.target.value)}
+          onChange={(event) => onChange(section.id, 'headline', event.target.value)}
           className="text-[16px] font-semibold text-foreground"
         />
         <Textarea
           placeholder="Write something..."
           value={section.content}
-          onChange={(e) => onChange(section.id, 'content', e.target.value)}
+          onChange={(event) => onChange(section.id, 'content', event.target.value)}
           rows={8}
           className="text-base min-h-[160px] text-foreground/75 resize-none leading-7"
         />

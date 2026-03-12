@@ -1,8 +1,8 @@
 import Link from 'next/link'
 import { FileText, BookOpen, Plus } from 'lucide-react'
 import { SidebarNavLink } from '@/components/SidebarNavLink'
-import { CreateGroupButton } from '@/components/CreateGroupButton'
-import { DeleteGroupButton } from '@/components/DeleteGroupButton'
+import { CreateTopicButton } from '@/components/CreateTopicButton'
+import { DeleteTopicButton } from '@/components/DeleteTopicButton'
 import { Text } from '@/components/typography/Text'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001/api'
@@ -10,33 +10,33 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001/api'
 interface SidebarPost {
   id: number
   title: string
-  groupId: number | null
+  topicId: number | null
 }
 
-interface SidebarGroup {
+interface SidebarTopic {
   id: number
   name: string
   posts: Pick<SidebarPost, 'id' | 'title'>[]
 }
 
-async function getData(): Promise<{ groups: SidebarGroup[]; ungrouped: SidebarPost[] }> {
+async function getData(): Promise<{ topics: SidebarTopic[]; ungrouped: SidebarPost[] }> {
   try {
-    const [groupsRes, postsRes] = await Promise.all([
-      fetch(`${API_URL}/groups`, { cache: 'no-store' }),
+    const [topicsRes, postsRes] = await Promise.all([
+      fetch(`${API_URL}/topics`, { cache: 'no-store' }),
       fetch(`${API_URL}/posts`, { cache: 'no-store' }),
     ])
-    const groups: SidebarGroup[] = groupsRes.ok ? await groupsRes.json() : []
+    const topics: SidebarTopic[] = topicsRes.ok ? await topicsRes.json() : []
     const posts: SidebarPost[] = postsRes.ok ? await postsRes.json() : []
-    const groupedIds = new Set(groups.flatMap((g) => g.posts.map((p) => p.id)))
-    const ungrouped = posts.filter((p) => !groupedIds.has(p.id))
-    return { groups, ungrouped }
+    const assignedPostIds = new Set(topics.flatMap((topic) => topic.posts.map((post) => post.id)))
+    const ungrouped = posts.filter((post) => !assignedPostIds.has(post.id))
+    return { topics, ungrouped }
   } catch {
-    return { groups: [], ungrouped: [] }
+    return { topics: [], ungrouped: [] }
   }
 }
 
 export const Sidebar = async () => {
-  const { groups, ungrouped } = await getData()
+  const { topics, ungrouped } = await getData()
 
   return (
     <aside className="w-64 h-screen bg-sidebar border-r border-sidebar-border flex flex-col shrink-0">
@@ -48,7 +48,7 @@ export const Sidebar = async () => {
           <div className="flex items-center justify-center w-7 h-7 rounded-md bg-foreground/90 text-background shrink-0">
             <BookOpen size={15} />
           </div>
-          <Text as="span" size="lg" className="font-sans font-bold text-sidebar-foreground/50">My Notes</Text>
+          <Text as="span" size="lg" className="font-sans font-bold text-sidebar-foreground">My Notes</Text>
         </Link>
       </div>
 
@@ -63,33 +63,40 @@ export const Sidebar = async () => {
       </div>
 
       <div className="relative flex-1 min-h-0">
-        <nav className="h-full overflow-y-auto scrollbar-hidden px-4 pb-32 mt-6 flex flex-col gap-6">
-        {groups.map((group) => (
-          <div key={group.id}>
-            <div className="group/group flex items-center justify-between px-2 py-1 mb-0.5">
+        <nav className="h-full overflow-y-auto scrollbar-hidden px-4 pb-32 mt-6 flex flex-col gap-2">
+        {topics.map((topic) => (
+          <div key={topic.id} className="group/topic">
+            <div className="flex items-center justify-between px-2 py-1 mb-0.5">
               <Text as="p" size="xs" className="font-semibold text-sidebar-foreground/60 uppercase tracking-widest truncate">
-                {group.name}
+                {topic.name}
               </Text>
-              <DeleteGroupButton groupId={group.id} />
+              <DeleteTopicButton topicId={topic.id} />
             </div>
             <div className="flex flex-col gap-0.5">
-              {group.posts.length === 0 ? (
+              {topic.posts.length === 0 ? (
                 <Text as="p" size="sm" className="text-sidebar-foreground/40 px-2 py-1 italic">No pages yet</Text>
               ) : (
-                group.posts.map((post) => (
+                topic.posts.map((post) => (
                   <SidebarNavLink key={post.id} href={`/posts/${post.id}`}>
                     <FileText size={15} className="shrink-0 opacity-70" />
                     <Text as="span" size="sm" className="truncate">{post.title}</Text>
                   </SidebarNavLink>
                 ))
               )}
+              <Link
+                href={`/posts/new?topicId=${topic.id}`}
+                className="opacity-0 group-hover/topic:opacity-100 transition-opacity flex items-center gap-1.5 px-2 py-1 text-[13px] text-sidebar-foreground/40 hover:text-sidebar-foreground"
+              >
+                <Plus size={13} />
+                Add page
+              </Link>
             </div>
           </div>
         ))}
 
         {ungrouped.length > 0 && (
           <div>
-            {groups.length > 0 && (
+            {topics.length > 0 && (
               <div className="px-2 py-1 mb-0.5">
                 <Text as="p" size="xs" className="font-semibold text-sidebar-foreground/50 uppercase tracking-widest">
                   Other
@@ -107,12 +114,12 @@ export const Sidebar = async () => {
           </div>
         )}
 
-        {groups.length === 0 && ungrouped.length === 0 && (
+        {topics.length === 0 && ungrouped.length === 0 && (
           <Text as="p" size="sm" className="text-sidebar-foreground/40 px-2 py-1">No pages yet</Text>
         )}
 
-        <div className="pt-1">
-          <CreateGroupButton />
+        <div className="pt-1 flex flex-col gap-0.5 items-start">
+          <CreateTopicButton />
         </div>
         </nav>
       </div>

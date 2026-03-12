@@ -2,7 +2,7 @@ import 'dotenv/config'
 import express from 'express'
 import cors from 'cors'
 import postRoutes from './routes/post.routes'
-import groupRoutes from './routes/group.routes'
+import topicRoutes from './routes/topic.routes'
 import { errorHandler } from './middleware/errorHandler'
 
 const app = express()
@@ -28,7 +28,7 @@ app.get('/health', (_req, res) => {
 })
 
 app.use('/api/posts', postRoutes)
-app.use('/api/groups', groupRoutes)
+app.use('/api/topics', topicRoutes)
 
 app.use(errorHandler)
 

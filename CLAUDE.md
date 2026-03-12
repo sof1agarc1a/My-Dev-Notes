@@ -6,6 +6,18 @@
 - **Quotes**: single quotes in TS/TSX, double quotes in JSX attributes
 - **Semicolons**: none (the project uses no-semicolon style)
 - **Braces**: always use curly braces for `if` statements — never inline, even for a single return or empty body
+- **Naming**: Don't name any variables with only one letter, like sections to s. Use section as naming instead, whole words to make it readable. Exception: use `e` for event parameters (e.g. `(e: React.ChangeEvent<...>) => ...`).
+- **Functions**: Extract inline JSX functions to named `const` declarations above the return statement **only when they contain logic** (if statements, conditions, multiple statements). Simple one-liner setters like `onChange={(e) => setName(e.target.value)}` are fine to keep inline.
+- **JSX expressions**: Keep simple data display inline — fallbacks like `{text || 'default'}` or `{value ?? 'placeholder'}` are fine in JSX. Extract to a named `const` only when the expression involves real logic (function calls, chained lookups, ternaries with computation). `className` strings (including conditional Tailwind via template literals or `cn()`) always stay inline.
+
+```tsx
+// Fine inline — simple fallback
+<span>{selectedGroupName ?? 'Select group'}</span>
+
+// Extract — complex lookup logic
+const selectedGroupName = groupId !== null ? groups.find((g) => g.id === groupId)?.name ?? null : null
+<span>{selectedGroupName ?? 'Select group'}</span>
+```
 
 ```ts
 // Bad
@@ -29,8 +41,9 @@ Never use raw HTML elements when a component exists for it:
 - Textareas → `<Textarea />` from `@/components/ui/textarea`
 - Cards → `<Card>`, `<CardHeader>`, `<CardContent>` from `@/components/ui/card`
 - Dividers → `<Separator />` from `@/components/ui/separator`
+- Selects → `<Select>`, `<SelectTrigger>`, `<SelectValue>`, `<SelectContent>`, `<SelectItem>` from `@/components/ui/select`
 
-Exception: use a raw `<label>` or `<select>` when no component exists for it.
+Exception: use a raw `<label>` when no component exists for it.
 
 ### Tailwind
 - Use Tailwind utility classes only — no inline styles

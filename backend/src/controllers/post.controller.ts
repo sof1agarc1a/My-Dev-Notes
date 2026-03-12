@@ -41,7 +41,7 @@ export async function createPost(req: Request, res: Response, next: NextFunction
     const post = await prisma.post.create({
       data: {
         title: body.title,
-        groupId: body.groupId ?? null,
+        topicId: body.topicId ?? null,
         sections: body.sections
           ? {
               create: body.sections.map((s, i) => ({
@@ -72,7 +72,7 @@ export async function updatePost(req: Request, res: Response, next: NextFunction
 
     const post = await prisma.post.update({
       where: { id },
-      data: { title: body.title, ...(body.groupId !== undefined && { groupId: body.groupId }) },
+      data: { title: body.title, ...(body.topicId !== undefined && { topicId: body.topicId }) },
       include: { sections: { orderBy: { order: 'asc' } } },
     })
 
