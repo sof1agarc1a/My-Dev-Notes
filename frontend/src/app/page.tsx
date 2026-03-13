@@ -16,7 +16,7 @@ export default function HomePage() {
       <Link href="/posts/new">
         <Button variant="outline">
           <PenLine size={15} className="mr-2" />
-          Add page
+          New page
         </Button>
       </Link>
     </div>

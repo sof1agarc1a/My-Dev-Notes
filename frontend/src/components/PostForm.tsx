@@ -209,7 +209,7 @@ export const PostForm = ({ post, topics = [], initialTopicId = null }: PostFormP
         <Button
           type="submit"
           disabled={loading}
-          className={!post ? 'bg-[oklch(0.875_0.14_44)] hover:bg-[oklch(0.855_0.16_44)] text-foreground' : ''}
+          className="bg-brand hover:bg-brand-hover text-foreground"
         >
           {post ? (
             <>

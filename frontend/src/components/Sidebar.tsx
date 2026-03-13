@@ -38,7 +38,7 @@ export const Sidebar = async () => {
 
   return (
     <aside className="w-72 h-screen bg-sidebar border-r border-sidebar-border flex flex-col shrink-0">
-      <div className="mx-4 pt-5 pb-3 border-b border-sidebar-border">
+      <div className="mx-5 pt-5 pb-3 border-b border-sidebar-border">
         <Link
           href="/"
           className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg cursor-pointer"
@@ -50,10 +50,10 @@ export const Sidebar = async () => {
         </Link>
       </div>
 
-      <div className="mx-4 pt-3 pb-3 border-b border-sidebar-border">
+      <div className="mx-5 pt-3 pb-3 border-b border-sidebar-border">
         <Link
           href="/posts/new"
-          className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-[15px] font-medium text-sidebar-foreground bg-[oklch(0.875_0.14_44)] hover:bg-[oklch(0.855_0.16_44)] transition-colors cursor-pointer w-full"
+          className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-[15px] font-medium text-sidebar-foreground bg-brand hover:bg-brand-hover transition-colors cursor-pointer w-full"
         >
           <Plus size={16} className="shrink-0" />
           <Text as="span" size="sm">New page</Text>
@@ -61,7 +61,7 @@ export const Sidebar = async () => {
       </div>
 
       <div className="relative flex-1 min-h-0">
-        <nav className="h-full overflow-y-auto scrollbar-hidden px-4 pb-32 mt-6">
+        <nav className="h-full overflow-y-auto scrollbar-hidden px-4 pl-2 pb-40 mt-6">
           <SidebarContent initialTopics={topics} ungrouped={ungrouped} />
         </nav>
       </div>

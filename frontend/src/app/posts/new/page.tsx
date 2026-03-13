@@ -18,7 +18,7 @@ export default async function NewPostPage({ searchParams }: Props) {
       <div className="flex items-center gap-2 mb-16">
         <FilePlus size={14} className="text-muted-foreground" />
         <Text as="p" size="xs" className="font-semibold text-muted-foreground uppercase tracking-widest leading-none">
-          Add page
+          New page
         </Text>
       </div>
       <PostForm key={topicId ?? 'none'} topics={topics} initialTopicId={topicId ? Number(topicId) : null} />

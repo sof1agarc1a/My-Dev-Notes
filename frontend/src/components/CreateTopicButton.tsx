@@ -24,7 +24,7 @@ export const CreateTopicButton = () => {
     setName('')
   }
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.BaseSyntheticEvent) => {
     e.preventDefault()
     if (!name.trim()) {
       return
@@ -76,12 +76,11 @@ export const CreateTopicButton = () => {
   return (
     <Button
       variant="ghost"
-      size="lg"
       onClick={() => setOpen(true)}
-      className="flex items-center gap-1.5 px-2 text-sidebar-foreground/50 hover:text-sidebar-foreground hover:bg-transparent"
+      className="flex justify-start gap-2.5 px-2 py-1.5 h-auto w-full text-[15px] font-medium bg-brand hover:bg-brand-hover text-foreground"
     >
       <Plus size={16} />
-      Add topic
+      New topic
     </Button>
   )
 }

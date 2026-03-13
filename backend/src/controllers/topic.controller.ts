@@ -35,8 +35,9 @@ export async function getAllTopics(_req: Request, res: Response, next: NextFunct
 export async function createTopic(req: Request, res: Response, next: NextFunction) {
   try {
     const body = req.body as CreateTopicInput
+    const last = await prisma.topic.findFirst({ orderBy: { order: 'desc' }, select: { order: true } })
     const topic = await prisma.topic.create({
-      data: { name: body.name },
+      data: { name: body.name, order: (last?.order ?? 0) + 1 },
       include: {
         posts: { select: { id: true, title: true } },
       },
