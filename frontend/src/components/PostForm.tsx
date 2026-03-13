@@ -18,7 +18,7 @@ interface PostFormProps {
 }
 
 function newSection(): SectionDraft {
-  return { id: crypto.randomUUID(), headline: '', content: '' }
+  return { id: crypto.randomUUID(), headline: '', content: '', code: '', codeLanguage: 'typescript' }
 }
 
 export const PostForm = ({ post, topics = [], initialTopicId = null }: PostFormProps) => {
@@ -28,8 +28,8 @@ export const PostForm = ({ post, topics = [], initialTopicId = null }: PostFormP
   const [topicId, setTopicId] = useState<number | null>(post?.topicId ?? initialTopicId)
   const [sections, setSections] = useState<SectionDraft[]>(
     post?.sections?.length
-      ? post.sections.map((section) => ({ id: String(section.id), headline: section.headline, content: section.content }))
-      : [{ id: initialSectionId, headline: '', content: '' }]
+      ? post.sections.map((section) => ({ id: String(section.id), headline: section.headline, content: section.content, code: section.code ?? '', codeLanguage: section.codeLanguage ?? 'typescript' }))
+      : [{ id: initialSectionId, headline: '', content: '', code: '', codeLanguage: 'typescript' }]
   )
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -39,7 +39,7 @@ export const PostForm = ({ post, topics = [], initialTopicId = null }: PostFormP
     : null
 
   const handleSectionChange = useCallback(
-    (id: string, field: 'headline' | 'content', value: string) => {
+    (id: string, field: 'headline' | 'content' | 'code' | 'codeLanguage', value: string) => {
       setSections((prev) => prev.map((section) => (section.id === id ? { ...section, [field]: value } : section)))
     },
     []
@@ -89,12 +89,14 @@ export const PostForm = ({ post, topics = [], initialTopicId = null }: PostFormP
         await Promise.all([
           ...toDelete.map((s) => api.sections.delete(post.id, s.id)),
           ...toCreate.map((s) =>
-            api.sections.create(post.id, { headline: s.headline, content: s.content })
+            api.sections.create(post.id, { headline: s.headline, content: s.content, code: s.code || null, codeLanguage: s.codeLanguage || null })
           ),
           ...toUpdate.map((s) =>
             api.sections.update(post.id, Number(s.id), {
               headline: s.headline,
               content: s.content,
+              code: s.code || null,
+              codeLanguage: s.codeLanguage || null,
             })
           ),
         ])
@@ -110,7 +112,7 @@ export const PostForm = ({ post, topics = [], initialTopicId = null }: PostFormP
         const created = await api.posts.create({
           title,
           topicId,
-          sections: filledSections.map((s) => ({ headline: s.headline, content: s.content })),
+          sections: filledSections.map((s) => ({ headline: s.headline, content: s.content, code: s.code || null, codeLanguage: s.codeLanguage || null })),
         })
         router.push(`/posts/${created.id}`)
       }

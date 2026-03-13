@@ -1,25 +1,46 @@
 /* eslint-disable react-hooks/refs */
 'use client'
 
+import { useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { GripVertical, Trash2 } from 'lucide-react'
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select'
+import { Text } from '@/components/typography/Text'
+import { GripVertical, Trash2, Code } from 'lucide-react'
 import { DraggableProvided } from '@hello-pangea/dnd'
+import hljs from 'highlight.js'
 
 export interface SectionDraft {
   id: string
   headline: string
   content: string
+  code: string
+  codeLanguage: string
 }
 
 interface SectionFormItemProps {
   section: SectionDraft
   provided: DraggableProvided
-  onChange: (id: string, field: 'headline' | 'content', value: string) => void
+  onChange: (id: string, field: 'headline' | 'content' | 'code' | 'codeLanguage', value: string) => void
   onRemove: (id: string) => void
   canRemove: boolean
 }
+
+const CODE_LANGUAGES = [
+  { value: 'typescript', label: 'TypeScript' },
+  { value: 'javascript', label: 'JavaScript' },
+  { value: 'python', label: 'Python' },
+  { value: 'bash', label: 'Bash' },
+  { value: 'sql', label: 'SQL' },
+  { value: 'json', label: 'JSON' },
+  { value: 'html', label: 'HTML' },
+  { value: 'css', label: 'CSS' },
+  { value: 'go', label: 'Go' },
+  { value: 'rust', label: 'Rust' },
+  { value: 'java', label: 'Java' },
+  { value: 'yaml', label: 'YAML' },
+]
 
 export const SectionFormItem = ({
   section,
@@ -29,6 +50,20 @@ export const SectionFormItem = ({
   canRemove,
 }: SectionFormItemProps) => {
   'use no memo'
+
+  const codePreviewRef = useRef<HTMLElement>(null)
+
+  // Can this be made differently?
+  useEffect(() => {
+    if (codePreviewRef.current && section.code) {
+      codePreviewRef.current.removeAttribute('data-highlighted')
+      codePreviewRef.current.textContent = section.code
+      hljs.highlightElement(codePreviewRef.current)
+    }
+  }, [section.code, section.codeLanguage])
+
+  const selectedLanguageLabel = CODE_LANGUAGES.find((lang) => lang.value === section.codeLanguage)?.label ?? 'TypeScript'
+
   return (
     <div
       ref={provided.innerRef}
@@ -48,16 +83,57 @@ export const SectionFormItem = ({
           type="text"
           placeholder="Section headline"
           value={section.headline}
-          onChange={(event) => onChange(section.id, 'headline', event.target.value)}
+          onChange={(e) => onChange(section.id, 'headline', e.target.value)}
           className="text-[16px] font-semibold text-foreground"
         />
         <Textarea
           placeholder="Write something..."
           value={section.content}
-          onChange={(event) => onChange(section.id, 'content', event.target.value)}
+          onChange={(e) => onChange(section.id, 'content', e.target.value)}
           rows={8}
           className="text-base min-h-[160px] text-foreground/75 resize-none leading-7"
         />
+
+        <div className="flex items-center justify-between mt-2">
+          <div className="flex items-center gap-2">
+            <Code size={14} className="text-muted-foreground" />
+            <Text as="span" size="xs" className="font-semibold text-muted-foreground uppercase tracking-widest">
+              Code snippet
+            </Text>
+          </div>
+          <Select
+            value={section.codeLanguage || 'typescript'}
+            onValueChange={(language) => onChange(section.id, 'codeLanguage', language ?? 'typescript')}
+          >
+            <SelectTrigger className="h-8 w-36 text-xs px-3">
+              <Text as="span" size="xs" className="text-muted-foreground">
+                {selectedLanguageLabel}
+              </Text>
+            </SelectTrigger>
+            <SelectContent>
+              {CODE_LANGUAGES.map((lang) => (
+                <SelectItem key={lang.value} value={lang.value}>
+                  {lang.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <Textarea
+          placeholder="Paste code here..."
+          value={section.code}
+          onChange={(e) => onChange(section.id, 'code', e.target.value)}
+          rows={6}
+          className="font-mono text-sm resize-none leading-6 bg-muted/50"
+          spellCheck={false}
+        />
+
+        {section.code && (
+          <pre className="rounded-lg overflow-x-auto text-sm leading-6 bg-[#f6f8fa]! border border-border">
+            <code ref={codePreviewRef} className={`language-${section.codeLanguage || 'typescript'}`} />
+          </pre>
+        )}
       </div>
 
       {canRemove && (

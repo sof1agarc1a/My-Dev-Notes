@@ -1,8 +1,6 @@
 import Link from 'next/link'
-import { FileText, BookOpen, Plus } from 'lucide-react'
-import { SidebarNavLink } from '@/components/SidebarNavLink'
-import { CreateTopicButton } from '@/components/CreateTopicButton'
-import { DeleteTopicButton } from '@/components/DeleteTopicButton'
+import { BookOpen, Plus } from 'lucide-react'
+import { SidebarContent } from '@/components/SidebarContent'
 import { Text } from '@/components/typography/Text'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001/api'
@@ -39,7 +37,7 @@ export const Sidebar = async () => {
   const { topics, ungrouped } = await getData()
 
   return (
-    <aside className="w-64 h-screen bg-sidebar border-r border-sidebar-border flex flex-col shrink-0">
+    <aside className="w-72 h-screen bg-sidebar border-r border-sidebar-border flex flex-col shrink-0">
       <div className="mx-4 pt-5 pb-3 border-b border-sidebar-border">
         <Link
           href="/"
@@ -63,64 +61,8 @@ export const Sidebar = async () => {
       </div>
 
       <div className="relative flex-1 min-h-0">
-        <nav className="h-full overflow-y-auto scrollbar-hidden px-4 pb-32 mt-6 flex flex-col gap-2">
-        {topics.map((topic) => (
-          <div key={topic.id} className="group/topic">
-            <div className="flex items-center justify-between px-2 py-1 mb-0.5">
-              <Text as="p" size="xs" className="font-semibold text-sidebar-foreground/60 uppercase tracking-widest truncate">
-                {topic.name}
-              </Text>
-              <DeleteTopicButton topicId={topic.id} />
-            </div>
-            <div className="flex flex-col gap-0.5">
-              {topic.posts.length === 0 ? (
-                <Text as="p" size="sm" className="text-sidebar-foreground/40 px-2 py-1 italic">No pages yet</Text>
-              ) : (
-                topic.posts.map((post) => (
-                  <SidebarNavLink key={post.id} href={`/posts/${post.id}`}>
-                    <FileText size={15} className="shrink-0 opacity-70" />
-                    <Text as="span" size="sm" className="truncate">{post.title}</Text>
-                  </SidebarNavLink>
-                ))
-              )}
-              <Link
-                href={`/posts/new?topicId=${topic.id}`}
-                className="opacity-0 group-hover/topic:opacity-100 transition-opacity flex items-center gap-1.5 px-2 py-1 text-[13px] text-sidebar-foreground/40 hover:text-sidebar-foreground"
-              >
-                <Plus size={13} />
-                Add page
-              </Link>
-            </div>
-          </div>
-        ))}
-
-        {ungrouped.length > 0 && (
-          <div>
-            {topics.length > 0 && (
-              <div className="px-2 py-1 mb-0.5">
-                <Text as="p" size="xs" className="font-semibold text-sidebar-foreground/50 uppercase tracking-widest">
-                  Other
-                </Text>
-              </div>
-            )}
-            <div className="flex flex-col gap-0.5">
-              {ungrouped.map((post) => (
-                <SidebarNavLink key={post.id} href={`/posts/${post.id}`}>
-                  <FileText size={15} className="shrink-0 opacity-70" />
-                  <Text as="span" size="sm" className="truncate">{post.title}</Text>
-                </SidebarNavLink>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {topics.length === 0 && ungrouped.length === 0 && (
-          <Text as="p" size="sm" className="text-sidebar-foreground/40 px-2 py-1">No pages yet</Text>
-        )}
-
-        <div className="pt-1 flex flex-col gap-0.5 items-start">
-          <CreateTopicButton />
-        </div>
+        <nav className="h-full overflow-y-auto scrollbar-hidden px-4 pb-32 mt-6">
+          <SidebarContent initialTopics={topics} ungrouped={ungrouped} />
         </nav>
       </div>
     </aside>

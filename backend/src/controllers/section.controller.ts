@@ -22,7 +22,7 @@ export async function createSection(req: Request, res: Response, next: NextFunct
     const order = last ? last.order + 1.0 : 1.0
 
     const section = await prisma.section.create({
-      data: { headline: body.headline, content: body.content, order, postId },
+      data: { headline: body.headline, content: body.content, code: body.code ?? null, codeLanguage: body.codeLanguage ?? null, order, postId },
     })
 
     res.status(201).json(section)
@@ -47,6 +47,8 @@ export async function updateSection(req: Request, res: Response, next: NextFunct
       data: {
         ...(body.headline !== undefined && { headline: body.headline }),
         ...(body.content !== undefined && { content: body.content }),
+        ...(body.code !== undefined && { code: body.code }),
+        ...(body.codeLanguage !== undefined && { codeLanguage: body.codeLanguage }),
       },
     })
 

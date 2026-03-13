@@ -1,7 +1,19 @@
 import { Request, Response, NextFunction } from 'express'
 import { prisma } from '../lib/prisma'
 import { AppError } from '../middleware/errorHandler'
-import { CreatePostInput, UpdatePostInput } from '../dtos/post.dto'
+import { CreatePostInput, UpdatePostInput, ReorderPostsInput } from '../dtos/post.dto'
+
+export async function reorderPosts(req: Request, res: Response, next: NextFunction) {
+  try {
+    const { ids } = req.body as ReorderPostsInput
+    await Promise.all(
+      ids.map((id, index) => prisma.post.update({ where: { id }, data: { order: index + 1 } }))
+    )
+    res.status(204).send()
+  } catch (err) {
+    next(err)
+  }
+}
 
 export async function getAllPosts(_req: Request, res: Response, next: NextFunction) {
   try {
@@ -47,6 +59,8 @@ export async function createPost(req: Request, res: Response, next: NextFunction
               create: body.sections.map((s, i) => ({
                 headline: s.headline,
                 content: s.content,
+                code: s.code ?? null,
+                codeLanguage: s.codeLanguage ?? null,
                 order: (i + 1) * 1.0,
               })),
             }

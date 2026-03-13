@@ -1,15 +1,27 @@
 import { Request, Response, NextFunction } from 'express'
 import { prisma } from '../lib/prisma'
 import { AppError } from '../middleware/errorHandler'
-import { CreateTopicInput, UpdateTopicInput } from '../dtos/topic.dto'
+import { CreateTopicInput, UpdateTopicInput, ReorderTopicsInput } from '../dtos/topic.dto'
+
+export async function reorderTopics(req: Request, res: Response, next: NextFunction) {
+  try {
+    const { ids } = req.body as ReorderTopicsInput
+    await Promise.all(
+      ids.map((id, index) => prisma.topic.update({ where: { id }, data: { order: index + 1 } }))
+    )
+    res.status(204).send()
+  } catch (err) {
+    next(err)
+  }
+}
 
 export async function getAllTopics(_req: Request, res: Response, next: NextFunction) {
   try {
     const topics = await prisma.topic.findMany({
-      orderBy: { createdAt: 'asc' },
+      orderBy: { order: 'asc' },
       include: {
         posts: {
-          orderBy: { createdAt: 'desc' },
+          orderBy: { order: 'asc' },
           select: { id: true, title: true },
         },
       },

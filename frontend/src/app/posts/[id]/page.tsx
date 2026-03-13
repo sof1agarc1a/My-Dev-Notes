@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { api } from '@/lib/api'
+import hljs from 'highlight.js'
+
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { DeletePostButton } from '@/components/DeletePostButton'
@@ -12,6 +14,14 @@ export const dynamic = 'force-dynamic'
 
 interface Props {
   params: Promise<{ id: string }>
+}
+
+const highlightCode = (code: string, language: string | null): string => {
+  try {
+    return hljs.highlight(code, { language: language ?? 'plaintext' }).value
+  } catch {
+    return hljs.highlightAuto(code).value
+  }
 }
 
 export default async function PostPage({ params }: Props) {
@@ -59,6 +69,14 @@ export default async function PostPage({ params }: Props) {
             <Text as="p" size="md" className="text-foreground/75 leading-7 whitespace-pre-wrap">
               {section.content}
             </Text>
+            {section.code && (
+              <pre className="mt-6 rounded-lg overflow-x-auto text-sm leading-6 bg-[#f6f8fa]! border border-border">
+                <code
+                  className={`language-${section.codeLanguage ?? 'plaintext'} hljs`}
+                  dangerouslySetInnerHTML={{ __html: highlightCode(section.code, section.codeLanguage) }}
+                />
+              </pre>
+            )}
             {index < post.sections.length - 1 && <Separator className="mt-12" />}
           </div>
         ))}

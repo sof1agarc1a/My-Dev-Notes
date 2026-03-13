@@ -9,6 +9,7 @@ datasource db {
 model Topic {
   id        Int      @id @default(autoincrement())
   name      String
+  order     Float    @default(0)
   posts     Post[]
   createdAt DateTime @default(now())
 }
@@ -17,6 +18,7 @@ model Post {
   id        Int       @id @default(autoincrement())
   title     String
   topicId   Int?
+  order     Float     @default(0)
   topic     Topic?    @relation(fields: [topicId], references: [id])
   sections  Section[]
   createdAt DateTime  @default(now())
@@ -24,10 +26,12 @@ model Post {
 }
 
 model Section {
-  id        Int    @id @default(autoincrement())
-  headline  String
-  content   String
-  order     Float  @default(0)
-  postId    Int
-  post      Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  id           Int     @id @default(autoincrement())
+  headline     String
+  content      String
+  code         String?
+  codeLanguage String?
+  order        Float   @default(0)
+  postId       Int
+  post         Post    @relation(fields: [postId], references: [id], onDelete: Cascade)
 }

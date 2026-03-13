@@ -4,6 +4,8 @@ export interface Section {
   id: number
   headline: string
   content: string
+  code: string | null
+  codeLanguage: string | null
   order: number
   postId: number
 }
@@ -51,6 +53,8 @@ export const api = {
     update: (id: number, data: { title: string; topicId?: number | null }) =>
       request<Post>(`/posts/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
     delete: (id: number) => request<void>(`/posts/${id}`, { method: 'DELETE' }),
+    reorder: (ids: number[]) =>
+      request<void>('/posts/reorder', { method: 'PATCH', body: JSON.stringify({ ids }) }),
   },
   topics: {
     list: () => request<Topic[]>('/topics'),
@@ -59,11 +63,13 @@ export const api = {
     update: (id: number, data: { name: string }) =>
       request<Topic>(`/topics/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
     delete: (id: number) => request<void>(`/topics/${id}`, { method: 'DELETE' }),
+    reorder: (ids: number[]) =>
+      request<void>('/topics/reorder', { method: 'PATCH', body: JSON.stringify({ ids }) }),
   },
   sections: {
-    create: (postId: number, data: { headline: string; content: string }) =>
+    create: (postId: number, data: { headline: string; content: string; code?: string | null; codeLanguage?: string | null }) =>
       request<Section>(`/posts/${postId}/sections`, { method: 'POST', body: JSON.stringify(data) }),
-    update: (postId: number, id: number, data: { headline?: string; content?: string }) =>
+    update: (postId: number, id: number, data: { headline?: string; content?: string; code?: string | null; codeLanguage?: string | null }) =>
       request<Section>(`/posts/${postId}/sections/${id}`, {
         method: 'PUT',
         body: JSON.stringify(data),
