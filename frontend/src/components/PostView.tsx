@@ -2,12 +2,16 @@
 
 import { useState } from 'react'
 import hljs from 'highlight.js'
+import createDOMPurify from 'dompurify'
 import { Post, Topic } from '@/lib/api'
 import { DeletePostButton } from '@/components/DeletePostButton'
 import { Button } from '@/components/ui/button'
 import { Heading } from '@/components/typography/Heading'
 import { Text } from '@/components/typography/Text'
 import { Pencil, Code, Copy, Check } from 'lucide-react'
+import { Separator } from '@/components/ui/separator'
+
+const DOMPurify = typeof window !== 'undefined' ? createDOMPurify(window) : null
 
 const highlightCode = (code: string, language: string | null): string => {
   try {
@@ -40,7 +44,7 @@ const CodeBlock = ({ code, codeLanguage }: { code: string; codeLanguage: string 
           variant="ghost"
           size="icon"
           onClick={handleCopy}
-          className="h-9 w-9 rounded-full text-muted-foreground bg-muted hover:bg-muted/70"
+          className="h-9 w-9 rounded-full"
         >
           {copied ? <Check size={13} /> : <Copy size={13} />}
         </Button>
@@ -48,7 +52,7 @@ const CodeBlock = ({ code, codeLanguage }: { code: string; codeLanguage: string 
       <pre className="rounded-lg overflow-x-auto text-sm leading-6 bg-[#f6f8fa]! border border-border">
         <code
           className={`language-${codeLanguage ?? 'plaintext'} hljs`}
-          dangerouslySetInnerHTML={{ __html: highlightCode(code, codeLanguage) }}
+          dangerouslySetInnerHTML={{ __html: DOMPurify?.sanitize(highlightCode(code, codeLanguage)) ?? highlightCode(code, codeLanguage) }}
         />
       </pre>
     </div>
@@ -68,7 +72,7 @@ export const PostView = ({ post, topics, onEdit }: PostViewProps) => {
 
   return (
     <div className="max-w-5xl mx-auto px-12 pt-16 pb-24">
-      <div className="flex items-start justify-between gap-6 mb-9.25">
+      <div className="flex items-start justify-between gap-6 mb-20.25">
         <div className="min-w-0">
           {topicName && (
             <div className="h-12 flex items-center">
@@ -90,7 +94,7 @@ export const PostView = ({ post, topics, onEdit }: PostViewProps) => {
             variant="ghost"
             size="icon"
             onClick={onEdit}
-            className="h-9 w-9 rounded-full text-muted-foreground bg-muted hover:bg-muted/70"
+            className="h-9 w-9 rounded-full"
           >
             <Pencil size={15} />
           </Button>
@@ -99,8 +103,9 @@ export const PostView = ({ post, topics, onEdit }: PostViewProps) => {
       </div>
 
       <div className="flex flex-col gap-12">
-        {post.sections.map((section) => (
+        {post.sections.map((section, index) => (
           <div key={section.id}>
+            {index > 0 && <Separator className="mb-12" />}
             <Heading as="h2" size="md" className="text-foreground px-3 py-2 -mx-3 -mt-2 mb-4">{section.headline}</Heading>
             <Text as="p" size="md" className="text-foreground/75 leading-7 whitespace-pre-wrap px-3 py-2 -mx-3 -mt-2">
               {section.content}

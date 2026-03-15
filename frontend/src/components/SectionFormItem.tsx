@@ -68,10 +68,10 @@ export const SectionFormItem = ({
       {canRemove && (
         <Button
           type="button"
-          variant="ghost"
+          variant="destructive"
           size="icon"
           onClick={() => onRemove(section.id)}
-          className="absolute -right-12 top-0 h-8 w-8 text-muted-foreground/0 group-hover/section:text-muted-foreground hover:text-destructive! transition-colors"
+          className="absolute -right-12 top-0 h-8 w-8 invisible group-hover/section:visible"
         >
           <Trash2 size={16} />
         </Button>

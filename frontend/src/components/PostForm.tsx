@@ -71,7 +71,7 @@ export const PostForm = ({ post, topics = [], initialTopicId = null, onSuccess, 
       return
     }
 
-    const filledSections = sections.filter((section) => section.headline.trim() || section.content.trim())
+    const filledSections = sections.filter((section) => section.headline.trim() || section.content.trim() || section.code?.trim())
 
     try {
       if (post) {
@@ -82,11 +82,14 @@ export const PostForm = ({ post, topics = [], initialTopicId = null, onSuccess, 
         const toUpdate = filledSections.filter((section) => existingIds.has(section.id))
         const toDelete = post.sections.filter((section) => !filledSections.find((draft) => draft.id === String(section.id)))
 
+        const createdSections = await Promise.all(
+          toCreate.map((s) =>
+            api.sections.create(post.id, { headline: s.headline, content: s.content, code: s.code || null, codeLanguage: s.codeLanguage || null })
+          )
+        )
+
         await Promise.all([
           ...toDelete.map((s) => api.sections.delete(post.id, s.id)),
-          ...toCreate.map((s) =>
-            api.sections.create(post.id, { headline: s.headline, content: s.content, code: s.code || null, codeLanguage: s.codeLanguage || null })
-          ),
           ...toUpdate.map((s) =>
             api.sections.update(post.id, Number(s.id), {
               headline: s.headline,
@@ -97,9 +100,12 @@ export const PostForm = ({ post, topics = [], initialTopicId = null, onSuccess, 
           ),
         ])
 
-        const remainingIds = filledSections.filter((section) => existingIds.has(section.id)).map((section) => Number(section.id))
-        if (remainingIds.length > 0) {
-          await api.sections.reorder(post.id, remainingIds)
+        const createdIdMap = new Map(toCreate.map((draft, i) => [draft.id, createdSections[i].id]))
+        const orderedIds = filledSections
+          .map((section) => (existingIds.has(section.id) ? Number(section.id) : (createdIdMap.get(section.id) ?? null)))
+          .filter((id): id is number => id !== null)
+        if (orderedIds.length > 0) {
+          await api.sections.reorder(post.id, orderedIds)
         }
 
         if (onSuccess) {
@@ -123,7 +129,7 @@ export const PostForm = ({ post, topics = [], initialTopicId = null, onSuccess, 
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col">
-      <div className="flex items-start justify-between gap-6 mb-18">
+      <div className="flex items-start justify-between gap-6 mb-29">
         <div className="min-w-0 flex-1">
           {topics.length > 0 && (
             <div className="flex items-center gap-3">
@@ -219,7 +225,7 @@ export const PostForm = ({ post, topics = [], initialTopicId = null, onSuccess, 
         type="button"
         variant="ghost"
         onClick={() => setSections((prev) => [...prev, newSection()])}
-        className="mt-12 self-start text-md text-foreground gap-2 bg-muted hover:bg-muted/70"
+        className="mt-12 self-start text-md gap-2"
       >
         <PlusCircle size={18} />
         Add section

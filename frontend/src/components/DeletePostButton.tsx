@@ -26,11 +26,11 @@ export const DeletePostButton = ({ postId }: { postId: number }) => {
 
   return (
     <Button
-      variant="ghost"
+      variant="destructive"
       size="icon"
       onClick={handleDelete}
       disabled={loading}
-      className="h-9 w-9 rounded-full text-muted-foreground bg-muted hover:bg-muted/70 hover:text-destructive"
+      className="h-9 w-9 rounded-full"
     >
       <Trash2 size={15} />
     </Button>

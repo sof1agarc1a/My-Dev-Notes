@@ -105,9 +105,9 @@ export const SidebarContent = ({ initialTopics, ungrouped }: SidebarContentProps
                         </div>
                         <Button
                           type="button"
-                          variant="ghost"
+                          variant="transparent"
                           onClick={() => toggleTopic(topic.id)}
-                          className="flex items-center justify-start gap-1.5 min-w-0 flex-1 h-auto p-0 hover:bg-transparent active:translate-y-0"
+                          className="flex items-center justify-start gap-1.5 min-w-0 flex-1 h-auto p-0 active:translate-y-0"
                         >
                           <ChevronRight
                             size={13}
