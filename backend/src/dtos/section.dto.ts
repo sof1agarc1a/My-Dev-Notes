@@ -3,8 +3,8 @@ import { z } from 'zod'
 export const CreateSectionDto = z.object({
   headline: z.string().min(1, 'Headline is required').max(255),
   content: z.string().min(1, 'Content is required'),
-  code: z.string().optional(),
-  codeLanguage: z.string().max(50).optional(),
+  code: z.string().nullable().optional(),
+  codeLanguage: z.string().max(50).nullable().optional(),
 })
 
 export const UpdateSectionDto = z.object({

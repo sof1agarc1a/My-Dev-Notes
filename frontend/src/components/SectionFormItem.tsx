@@ -1,15 +1,14 @@
 /* eslint-disable react-hooks/refs */
 'use client'
 
-import { useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select'
+import { Separator } from '@/components/ui/separator'
 import { Text } from '@/components/typography/Text'
 import { GripVertical, Trash2, Code } from 'lucide-react'
 import { DraggableProvided } from '@hello-pangea/dnd'
-import hljs from 'highlight.js'
 
 export interface SectionDraft {
   id: string
@@ -25,9 +24,10 @@ interface SectionFormItemProps {
   onChange: (id: string, field: 'headline' | 'content' | 'code' | 'codeLanguage', value: string) => void
   onRemove: (id: string) => void
   canRemove: boolean
+  isLast: boolean
 }
 
-const CODE_LANGUAGES = [
+const codeLanguages = [
   { value: 'typescript', label: 'TypeScript' },
   { value: 'javascript', label: 'JavaScript' },
   { value: 'python', label: 'Python' },
@@ -48,53 +48,52 @@ export const SectionFormItem = ({
   onChange,
   onRemove,
   canRemove,
+  isLast,
 }: SectionFormItemProps) => {
-  'use no memo'
-
-  const codePreviewRef = useRef<HTMLElement>(null)
-
-  // Can this be made differently?
-  useEffect(() => {
-    if (codePreviewRef.current && section.code) {
-      codePreviewRef.current.removeAttribute('data-highlighted')
-      codePreviewRef.current.textContent = section.code
-      hljs.highlightElement(codePreviewRef.current)
-    }
-  }, [section.code, section.codeLanguage])
-
-  const selectedLanguageLabel = CODE_LANGUAGES.find((lang) => lang.value === section.codeLanguage)?.label ?? 'TypeScript'
+  const selectedLanguageLabel = codeLanguages.find((lang) => lang.value === section.codeLanguage)?.label ?? 'TypeScript'
 
   return (
     <div
       ref={provided.innerRef}
       {...provided.draggableProps}
-      className="group relative flex gap-2 items-start pt-8 pb-12 border-b border-border last:border-b-0"
+      className="relative group/section"
     >
       <div
-        // eslint-disable-next-line react-hooks/refs
         {...(provided.dragHandleProps ?? {})}
-        className="mt-1 text-muted-foreground/30 hover:text-muted-foreground cursor-grab active:cursor-grabbing transition-colors shrink-0"
+        className="absolute -left-10 top-3 text-muted-foreground/0 group-hover/section:text-muted-foreground/40 hover:text-muted-foreground! cursor-grab active:cursor-grabbing transition-colors"
       >
-        <GripVertical size={16} />
+        <GripVertical size={20} />
       </div>
 
-      <div className="flex-1 flex flex-col gap-2 min-w-0">
+      {canRemove && (
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          onClick={() => onRemove(section.id)}
+          className="absolute -right-12 top-0 h-8 w-8 text-muted-foreground/0 group-hover/section:text-muted-foreground hover:text-destructive! transition-colors"
+        >
+          <Trash2 size={16} />
+        </Button>
+      )}
+
+      <div className="flex flex-col">
         <Input
           type="text"
           placeholder="Section headline"
           value={section.headline}
           onChange={(e) => onChange(section.id, 'headline', e.target.value)}
-          className="text-[16px] font-semibold text-foreground"
+          className="text-3xl font-semibold leading-snug bg-transparent border-none shadow-none ring-0 hover:ring-1 hover:ring-inset hover:ring-border focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring px-3 py-2 h-auto rounded-lg text-foreground -ml-3 w-[calc(100%+1.5rem)] -mt-2 mb-4"
         />
+
         <Textarea
           placeholder="Write something..."
           value={section.content}
           onChange={(e) => onChange(section.id, 'content', e.target.value)}
-          rows={8}
-          className="text-base min-h-[160px] text-foreground/75 resize-none leading-7"
+          className="text-base leading-7 text-foreground/75 bg-transparent border-none shadow-none ring-0 hover:ring-1 hover:ring-inset hover:ring-border focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring resize-none px-3 py-2 rounded-lg -ml-3 w-[calc(100%+1.5rem)] -mt-2 min-h-0"
         />
 
-        <div className="flex items-center justify-between mt-2">
+        <div className="flex items-center justify-between mt-6">
           <div className="flex items-center gap-2">
             <Code size={14} className="text-muted-foreground" />
             <Text as="span" size="xs" className="font-semibold text-muted-foreground uppercase tracking-widest">
@@ -105,13 +104,13 @@ export const SectionFormItem = ({
             value={section.codeLanguage || 'typescript'}
             onValueChange={(language) => onChange(section.id, 'codeLanguage', language ?? 'typescript')}
           >
-            <SelectTrigger className="h-8 w-36 text-xs px-3">
-              <Text as="span" size="xs" className="text-muted-foreground">
+            <SelectTrigger className="h-auto border-none shadow-none px-0 py-0 gap-1 focus:ring-0 w-auto">
+              <Text as="span" size="xs">
                 {selectedLanguageLabel}
               </Text>
             </SelectTrigger>
             <SelectContent>
-              {CODE_LANGUAGES.map((lang) => (
+              {codeLanguages.map((lang) => (
                 <SelectItem key={lang.value} value={lang.value}>
                   {lang.label}
                 </SelectItem>
@@ -125,28 +124,12 @@ export const SectionFormItem = ({
           value={section.code}
           onChange={(e) => onChange(section.id, 'code', e.target.value)}
           rows={6}
-          className="font-mono text-sm resize-none leading-6 bg-muted/50"
+          className="font-mono text-sm resize-none leading-6 bg-[#f6f8fa] border border-border rounded-lg"
           spellCheck={false}
         />
-
-        {section.code && (
-          <pre className="rounded-lg overflow-x-auto text-sm leading-6 bg-[#f6f8fa]! border border-border">
-            <code ref={codePreviewRef} className={`language-${section.codeLanguage || 'typescript'}`} />
-          </pre>
-        )}
       </div>
 
-      {canRemove && (
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          onClick={() => onRemove(section.id)}
-          className="h-9 w-9 shrink-0 mt-0.5 text-muted-foreground/0 group-hover:text-muted-foreground hover:text-destructive! transition-colors"
-        >
-          <Trash2 size={20} />
-        </Button>
-      )}
+      {!isLast && <Separator className="mt-12" />}
     </div>
   )
 }

@@ -18,7 +18,7 @@ export const SidebarNavLink = ({ href, children, className }: SidebarNavLinkProp
     <Link
       href={href}
       className={cn(
-        'flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-[15px] transition-colors w-full',
+        'flex items-center gap-2.5 px-2 py-1.5 mr-5 rounded-lg text-[15px] transition-colors w-full',
         className,
         isActive
           ? 'bg-sidebar-accent text-sidebar-accent-foreground font-semibold'

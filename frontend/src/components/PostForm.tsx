@@ -15,13 +15,15 @@ interface PostFormProps {
   post?: Post
   topics?: Topic[]
   initialTopicId?: number | null
+  onSuccess?: () => void
+  onCancel?: () => void
 }
 
 function newSection(): SectionDraft {
   return { id: crypto.randomUUID(), headline: '', content: '', code: '', codeLanguage: 'typescript' }
 }
 
-export const PostForm = ({ post, topics = [], initialTopicId = null }: PostFormProps) => {
+export const PostForm = ({ post, topics = [], initialTopicId = null, onSuccess, onCancel }: PostFormProps) => {
   const router = useRouter()
   const initialSectionId = useId()
   const [title, setTitle] = useState(post?.title ?? '')
@@ -31,7 +33,6 @@ export const PostForm = ({ post, topics = [], initialTopicId = null }: PostFormP
       ? post.sections.map((section) => ({ id: String(section.id), headline: section.headline, content: section.content, code: section.code ?? '', codeLanguage: section.codeLanguage ?? 'typescript' }))
       : [{ id: initialSectionId, headline: '', content: '', code: '', codeLanguage: 'typescript' }]
   )
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
   const selectedTopicName = topicId !== null
@@ -61,10 +62,6 @@ export const PostForm = ({ post, topics = [], initialTopicId = null }: PostFormP
     })
   }
 
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTitle(e.target.value)
-  }
-
   const handleSubmit = async (e: React.BaseSyntheticEvent) => {
     e.preventDefault()
     setError('')
@@ -76,7 +73,6 @@ export const PostForm = ({ post, topics = [], initialTopicId = null }: PostFormP
 
     const filledSections = sections.filter((section) => section.headline.trim() || section.content.trim())
 
-    setLoading(true)
     try {
       if (post) {
         await api.posts.update(post.id, { title, topicId })
@@ -106,8 +102,12 @@ export const PostForm = ({ post, topics = [], initialTopicId = null }: PostFormP
           await api.sections.reorder(post.id, remainingIds)
         }
 
-        router.push(`/posts/${post.id}`)
-        router.refresh()
+        if (onSuccess) {
+          onSuccess()
+        } else {
+          router.push(`/posts/${post.id}`)
+          router.refresh()
+        }
       } else {
         const created = await api.posts.create({
           title,
@@ -118,112 +118,112 @@ export const PostForm = ({ post, topics = [], initialTopicId = null }: PostFormP
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong')
-    } finally {
-      setLoading(false)
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-10">
-      <Input
-        type="text"
-        placeholder="Page title..."
-        value={title}
-        onChange={handleTitleChange}
-        className="border-none bg-transparent px-0 text-[32px] font-bold tracking-tight text-foreground shadow-none placeholder:text-foreground/20 focus-visible:ring-0 h-auto"
-      />
+    <form onSubmit={handleSubmit} className="flex flex-col">
+      <div className="flex items-start justify-between gap-6 mb-18">
+        <div className="min-w-0 flex-1">
+          {topics.length > 0 && (
+            <div className="flex items-center gap-3">
+              <Text as="span" size="sm" className="text-muted-foreground shrink-0">Topic ·</Text>
+              <Select
+                value={topicId !== null ? String(topicId) : ''}
+                onValueChange={(val) => setTopicId(val ? Number(val) : null)}
+              >
+                <SelectTrigger className="h-auto border-none shadow-none px-0 py-0 gap-1 focus:ring-0 w-auto text-sm text-muted-foreground hover:text-foreground transition-colors">
+                  <Text as="span" size="sm" className={selectedTopicName ? 'text-foreground' : 'text-muted-foreground'}>
+                    {selectedTopicName ?? 'Select topic'}
+                  </Text>
+                </SelectTrigger>
+                <SelectContent>
+                  {topics.map((topic) => (
+                    <SelectItem key={topic.id} value={String(topic.id)}>{topic.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
-      {topics.length > 0 && (
-        <div className="flex items-center gap-6">
-          <label className="text-xs font-semibold text-muted-foreground uppercase tracking-widest shrink-0">
-            Topic
-          </label>
-          <Select
-            value={topicId !== null ? String(topicId) : ''}
-            onValueChange={(val) => setTopicId(val ? Number(val) : null)}
-          >
-            <SelectTrigger className="h-11 min-w-44 px-4">
-              <Text as="span" size="sm" className={`flex-1 text-left leading-none ${selectedTopicName ? '' : 'text-muted-foreground'}`}>
-                {selectedTopicName ?? 'Select topic'}
-              </Text>
-            </SelectTrigger>
-            <SelectContent>
-              {topics.map((topic) => (
-                <SelectItem key={topic.id} value={String(topic.id)}>{topic.name}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Input
+            type="text"
+            placeholder="Page title..."
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="border-none bg-transparent mt-4 px-0 py-0 text-6xl font-bold leading-tight tracking-tight text-foreground shadow-none placeholder:text-foreground/20 focus-visible:ring-0 h-auto"
+          />
         </div>
-      )}
 
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <Text as="p" size="xs" className="font-semibold text-muted-foreground uppercase tracking-widest">
-            Sections
-          </Text>
+        <div className="flex items-center gap-1.5 shrink-0 mt-1">
           <Button
             type="button"
             variant="ghost"
-            onClick={() => setSections((prev) => [...prev, newSection()])}
-            className="text-md text-muted-foreground hover:text-foreground gap-2"
+            size="sm"
+            onClick={() => onCancel ? onCancel() : router.back()}
+            className="text-foreground bg-muted hover:bg-muted/70"
           >
-            <PlusCircle size={18} />
-            Add section
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            size="sm"
+            className="bg-brand hover:bg-brand-hover text-foreground gap-1.5"
+          >
+            {post ? (
+              <>
+                <Save size={14} />
+                Save changes
+              </>
+            ) : (
+              <>
+                <FilePlus size={14} />
+                Create page
+              </>
+            )}
           </Button>
         </div>
-
-        <DragDropContext onDragEnd={handleDragEnd}>
-          <Droppable droppableId="sections">
-            {(provided) => (
-              <div
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-                className="flex flex-col gap-3"
-              >
-                {sections.map((section, index) => (
-                  <Draggable key={section.id} draggableId={section.id} index={index}>
-                    {(draggableProvided) => (
-                      <SectionFormItem
-                        section={section}
-                        provided={draggableProvided}
-                        onChange={handleSectionChange}
-                        onRemove={handleRemove}
-                        canRemove={true}
-                      />
-                    )}
-                  </Draggable>
-                ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
       </div>
 
-      {error && <Text as="p" size="sm" className="text-destructive">{error}</Text>}
+      {error && <Text as="p" size="sm" className="text-destructive mb-6">{error}</Text>}
 
-      <div className="flex gap-2 justify-end">
-        <Button type="button" variant="ghost" onClick={() => router.back()} className="text-muted-foreground">
-          Cancel
-        </Button>
-        <Button
-          type="submit"
-          disabled={loading}
-          className="bg-brand hover:bg-brand-hover text-foreground"
-        >
-          {post ? (
-            <>
-              <Save size={15} />
-              {loading ? 'Saving...' : 'Save changes'}
-            </>
-          ) : (
-            <>
-              <FilePlus size={15} />
-              {loading ? 'Creating...' : 'Create page'}
-            </>
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <Droppable droppableId="sections">
+          {(provided) => (
+            <div
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              className="flex flex-col gap-12"
+            >
+              {sections.map((section, index) => (
+                <Draggable key={section.id} draggableId={section.id} index={index}>
+                  {(draggableProvided) => (
+                    <SectionFormItem
+                      section={section}
+                      provided={draggableProvided}
+                      onChange={handleSectionChange}
+                      onRemove={handleRemove}
+                      canRemove={true}
+                      isLast={index === sections.length - 1}
+                    />
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
           )}
-        </Button>
-      </div>
+        </Droppable>
+      </DragDropContext>
+
+      <Button
+        type="button"
+        variant="ghost"
+        onClick={() => setSections((prev) => [...prev, newSection()])}
+        className="mt-12 self-start text-md text-foreground gap-2 bg-muted hover:bg-muted/70"
+      >
+        <PlusCircle size={18} />
+        Add section
+      </Button>
     </form>
   )
 }

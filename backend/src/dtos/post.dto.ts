@@ -8,8 +8,8 @@ export const CreatePostDto = z.object({
       z.object({
         headline: z.string().max(255),
         content: z.string(),
-        code: z.string().optional(),
-        codeLanguage: z.string().max(50).optional(),
+        code: z.string().nullable().optional(),
+        codeLanguage: z.string().max(50).nullable().optional(),
       })
     )
     .optional(),

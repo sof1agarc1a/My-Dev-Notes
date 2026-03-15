@@ -12,9 +12,9 @@ interface HeadingProps extends HTMLAttributes<HTMLHeadingElement> {
 const sizeClasses: Record<HeadingSize, string> = {
   xs: 'text-xl font-semibold leading-tight',
   sm: 'text-2xl font-semibold leading-snug',
-  md: 'text-4xl font-semibold leading-snug',
+  md: 'text-3xl font-semibold leading-snug',
   lg: 'text-5xl font-bold leading-tight',
-  xl: 'text-7xl font-bold leading-tight tracking-tight',
+  xl: 'text-6xl font-bold leading-tight tracking-tight',
 }
 
 export const Heading = ({ as: Tag = 'h2', size = 'md', className, children, ...props }: HeadingProps) => {
