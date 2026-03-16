@@ -198,7 +198,7 @@ export const BlockFormItem = ({ control, index, provided, onRemove }: BlockFormI
                 placeholder="Paste code here..."
                 {...field}
                 rows={6}
-                className="font-mono text-sm resize-none leading-6 bg-[#f6f8fa] dark:bg-[oklch(0.22_0_0)] border border-border rounded-lg focus-visible:ring-0 focus-visible:border-foreground/40"
+                className="font-mono text-sm resize-none leading-6 bg-code-background border border-border rounded-lg focus-visible:ring-0 focus-visible:border-foreground/40"
                 spellCheck={false}
               />
             )}

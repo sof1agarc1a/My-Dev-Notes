@@ -38,7 +38,7 @@ export const CodeBlock = ({ code, codeLanguage }: CodeBlockProps) => {
           {copied ? <Check size={13} /> : <Copy size={13} />}
         </Button>
       </div>
-      <pre className="rounded-lg overflow-x-auto text-sm leading-6 bg-[#f6f8fa] dark:bg-[oklch(0.22_0_0)] border border-border">
+      <pre className="rounded-lg overflow-x-auto text-sm leading-6 bg-code-background border border-border">
         <code
           className={`language-${codeLanguage ?? 'plaintext'} hljs`}
           dangerouslySetInnerHTML={{
