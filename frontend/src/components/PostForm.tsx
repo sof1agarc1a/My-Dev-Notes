@@ -1,22 +1,23 @@
 'use client'
 
+import { useEffect, useId, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useId } from 'react'
-import { useForm, useFieldArray, Controller } from 'react-hook-form'
-import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd'
+import { Controller, useFieldArray, useForm } from 'react-hook-form'
+import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd'
 import { api, Post, Topic } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select'
 import { SectionFormItem } from '@/components/SectionFormItem'
 import { Text } from '@/components/typography/Text'
-import { PlusCircle, FilePlus, Save } from 'lucide-react'
+import { ConfirmDialog } from '@/components/ui/confirm-dialog'
+import { FilePlus, PlusCircle, Save } from 'lucide-react'
 
 interface PostFormProps {
   post?: Post
   topics?: Topic[]
   initialTopicId?: number | null
-  onSuccess?: () => void
+  onSuccess?: () => Promise<void>
   onCancel?: () => void
 }
 
@@ -81,6 +82,67 @@ export const PostForm = ({
 
   const { fields, append, remove, move } = useFieldArray({ control, name: 'sections' })
 
+  const [showDiscardDialog, setShowDiscardDialog] = useState(false)
+  const pendingNavRef = useRef<(() => void) | null>(null)
+
+  // Block navigation when there are unsaved changes
+  useEffect(() => {
+    if (!isDirty) {
+      return
+    }
+
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault()
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload)
+
+    // Intercept all link clicks before Next.js router handles them
+    const handleLinkClick = (event: MouseEvent) => {
+      const anchor = (event.target as HTMLElement).closest('a')
+      if (!anchor) {
+        return
+      }
+      const href = anchor.getAttribute('href')
+      if (!href || href === window.location.pathname) {
+        return
+      }
+      event.stopPropagation()
+      event.preventDefault()
+      pendingNavRef.current = () => router.push(href)
+      setShowDiscardDialog(true)
+    }
+
+    document.addEventListener('click', handleLinkClick, true)
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+      document.removeEventListener('click', handleLinkClick, true)
+    }
+  }, [isDirty, router])
+
+  const handleCancel = () => {
+    if (isDirty) {
+      setShowDiscardDialog(true)
+    } else if (onCancel) {
+      onCancel()
+    } else {
+      router.back()
+    }
+  }
+
+  const handleDiscardConfirm = () => {
+    setShowDiscardDialog(false)
+    if (pendingNavRef.current) {
+      const nav = pendingNavRef.current
+      pendingNavRef.current = null
+      nav()
+    } else if (onCancel) {
+      onCancel()
+    } else {
+      router.back()
+    }
+  }
+
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) {
       return
@@ -143,7 +205,7 @@ export const PostForm = ({
         await api.sections.reorder(post.id, orderedIds)
 
         if (onSuccess) {
-          onSuccess()
+          await onSuccess()
         } else {
           router.push(`/posts/${post.id}`)
           router.refresh()
@@ -168,132 +230,155 @@ export const PostForm = ({
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
-      <div className="flex items-start justify-between gap-6 mb-29">
-        <div className="min-w-0 flex-1">
-          {topics.length > 0 && (
-            <div className="flex items-center gap-3">
-              <Text as="span" size="sm" className="text-muted-foreground shrink-0">
-                Topic ·
-              </Text>
-              <Controller
-                control={control}
-                name="topicId"
-                render={({ field }) => (
-                  <Select
-                    value={field.value !== null ? String(field.value) : ''}
-                    onValueChange={(val) => field.onChange(val ? Number(val) : null)}
-                  >
-                    <SelectTrigger className="h-auto border-none shadow-none px-0 py-0 gap-1 focus:ring-0 w-auto text-sm text-muted-foreground hover:text-foreground transition-colors">
-                      <Text
-                        as="span"
-                        size="sm"
-                        className={
-                          field.value !== null ? 'text-foreground' : 'text-muted-foreground'
-                        }
-                      >
-                        {field.value !== null
-                          ? (topics.find((topic) => topic.id === field.value)?.name ??
-                            'Select topic')
-                          : 'Select topic'}
-                      </Text>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {topics.map((topic) => (
-                        <SelectItem key={topic.id} value={String(topic.id)}>
-                          {topic.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-            </div>
-          )}
-
-          <Input
-            type="text"
-            placeholder="Page title..."
-            autoFocus={!post}
-            {...register('title')}
-            className="border-none rounded-none bg-transparent mt-4 px-0 py-0 text-6xl font-bold leading-tight tracking-tight text-foreground shadow-none placeholder:text-foreground/20 focus-visible:ring-0 h-auto"
-          />
-        </div>
-
-        <div className="flex items-center gap-1.5 shrink-0 mt-1">
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => (onCancel ? onCancel() : router.back())}
-            className="text-foreground bg-muted hover:bg-muted/70"
-          >
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            size="sm"
-            disabled={!isDirty || isSubmitting}
-            className="bg-brand hover:bg-brand-hover text-foreground gap-1.5 disabled:opacity-40"
-          >
-            {post ? (
-              <>
-                <Save size={14} />
-                Save changes
-              </>
-            ) : (
-              <>
-                <FilePlus size={14} />
-                Create page
-              </>
-            )}
-          </Button>
-        </div>
-      </div>
-
-      {errors.root && (
-        <Text as="p" size="sm" className="text-destructive mb-6">
-          {errors.root.message}
-        </Text>
-      )}
-
-      <DragDropContext onDragEnd={handleDragEnd}>
-        <Droppable droppableId="sections">
-          {(provided) => (
-            <div
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-              className="flex flex-col gap-12"
-            >
-              {fields.map((field, index) => (
-                <Draggable key={field.sectionId} draggableId={field.sectionId} index={index}>
-                  {(draggableProvided) => (
-                    <SectionFormItem
-                      control={control}
-                      index={index}
-                      provided={draggableProvided}
-                      onRemove={() => remove(index)}
-                      canRemove={true}
-                      isLast={index === fields.length - 1}
-                    />
+    <>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
+        <div className="flex items-start justify-between gap-6 mb-29">
+          <div className="min-w-0 flex-1">
+            {topics.length > 0 && (
+              <div className="flex items-center gap-3">
+                <Text as="span" size="sm" className="text-muted-foreground shrink-0">
+                  Topic ·
+                </Text>
+                <Controller
+                  control={control}
+                  name="topicId"
+                  render={({ field }) => (
+                    <Select
+                      value={field.value !== null ? String(field.value) : ''}
+                      onValueChange={(val) => field.onChange(val ? Number(val) : null)}
+                    >
+                      <SelectTrigger className="h-auto border-none shadow-none px-0 py-0 gap-1 focus:ring-0 w-auto text-sm text-muted-foreground hover:text-foreground transition-colors">
+                        <Text
+                          as="span"
+                          size="sm"
+                          className={
+                            field.value !== null ? 'text-foreground' : 'text-muted-foreground'
+                          }
+                        >
+                          {field.value !== null
+                            ? (topics.find((topic) => topic.id === field.value)?.name ??
+                              'Select topic')
+                            : 'Select topic'}
+                        </Text>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {topics.map((topic) => (
+                          <SelectItem key={topic.id} value={String(topic.id)}>
+                            {topic.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
+                />
+              </div>
+            )}
 
-      <Button
-        type="button"
-        variant="ghost"
-        onClick={() => append(newSection())}
-        className="self-start text-md gap-2"
-      >
-        <PlusCircle size={18} />
-        Add section
-      </Button>
-    </form>
+            <Input
+              type="text"
+              placeholder="Page title..."
+              autoFocus={!post}
+              {...register('title')}
+              className="border-none rounded-none bg-transparent mt-4 px-0 py-0 text-6xl font-bold leading-tight tracking-tight text-foreground shadow-none placeholder:text-foreground/20 focus-visible:ring-0 h-auto"
+            />
+          </div>
+
+          <div className="flex items-center gap-1.5 shrink-0 mt-1">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={handleCancel}
+              className="text-foreground bg-muted hover:bg-muted/70"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              size="sm"
+              disabled={!isDirty || isSubmitting}
+              className="bg-brand hover:bg-brand-hover text-foreground gap-1.5 disabled:opacity-40"
+            >
+              {post ? (
+                <>
+                  <Save size={14} />
+                  Save changes
+                </>
+              ) : (
+                <>
+                  <FilePlus size={14} />
+                  Create page
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+
+        {errors.root && (
+          <Text as="p" size="sm" className="text-destructive mb-6">
+            {errors.root.message}
+          </Text>
+        )}
+
+        <DragDropContext onDragEnd={handleDragEnd}>
+          <Droppable droppableId="sections">
+            {(provided) => (
+              <div
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                className="flex flex-col gap-12"
+              >
+                {fields.map((field, index) => (
+                  <Draggable key={field.sectionId} draggableId={field.sectionId} index={index}>
+                    {(draggableProvided) => (
+                      <SectionFormItem
+                        control={control}
+                        index={index}
+                        provided={draggableProvided}
+                        onRemove={() => remove(index)}
+                        canRemove={true}
+                        isLast={index === fields.length - 1}
+                      />
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() => append(newSection())}
+          className="self-start text-md gap-2"
+        >
+          <PlusCircle size={18} />
+          Add section
+        </Button>
+      </form>
+
+      <ConfirmDialog
+        open={showDiscardDialog}
+        onOpenChange={setShowDiscardDialog}
+        title="Unsaved changes"
+        description="You have unsaved changes. Do you want to save before leaving?"
+        confirmLabel="Leave without saving"
+        showDeleteIcon={false}
+        showCancel={false}
+        onConfirm={handleDiscardConfirm}
+        saveLabel="Save and continue"
+        onSave={async () => {
+          const pending = pendingNavRef.current
+          pendingNavRef.current = null
+          setShowDiscardDialog(false)
+          await handleSubmit(onSubmit)()
+          if (pending) {
+            pending()
+          }
+        }}
+      />
+    </>
   )
 }

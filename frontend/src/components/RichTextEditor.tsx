@@ -10,7 +10,6 @@ import {
   Underline as UnderlineIcon,
   Strikethrough,
   Heading2,
-  Heading3,
   List,
   ListOrdered,
 } from 'lucide-react'
@@ -124,13 +123,6 @@ export const RichTextEditor = ({
             title="Heading 2"
           >
             <Heading2 size={13} />
-          </ToolbarButton>
-          <ToolbarButton
-            onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-            active={editor.isActive('heading', { level: 3 })}
-            title="Heading 3"
-          >
-            <Heading3 size={13} />
           </ToolbarButton>
           <div className="w-px h-4 bg-border mx-0.5" />
           <ToolbarButton
