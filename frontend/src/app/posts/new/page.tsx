@@ -13,7 +13,11 @@ export default async function NewPostPage({ searchParams }: Props) {
 
   return (
     <div className="max-w-5xl mx-auto px-12 pt-16 pb-24">
-      <PostForm key={topicId ?? 'none'} topics={topics} initialTopicId={topicId ? Number(topicId) : null} />
+      <PostForm
+        key={topicId ?? 'none'}
+        topics={topics}
+        initialTopicId={topicId ? Number(topicId) : null}
+      />
     </div>
   )
 }

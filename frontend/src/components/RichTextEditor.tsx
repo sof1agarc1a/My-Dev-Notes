@@ -70,7 +70,11 @@ export const RichTextEditor = ({
 }: RichTextEditorProps) => {
   const editor = useEditor({
     immediatelyRender: false,
-    extensions: [StarterKit.configure({ heading: { levels: [2, 3] } }), Underline, Placeholder.configure({ placeholder })],
+    extensions: [
+      StarterKit.configure({ heading: { levels: [2, 3] } }),
+      Underline,
+      Placeholder.configure({ placeholder }),
+    ],
     content: parseContent(value),
     onUpdate: ({ editor: e }) => {
       onChange(e.isEmpty ? '' : JSON.stringify(e.getJSON()))

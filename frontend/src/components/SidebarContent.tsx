@@ -113,7 +113,11 @@ export const SidebarContent = ({ initialTopics, ungrouped }: SidebarContentProps
                             size={13}
                             className={`shrink-0 text-sidebar-foreground/40 transition-transform duration-200 ease-in-out ${collapsedTopics.has(topic.id) ? '' : 'rotate-90'}`}
                           />
-                          <Text as="p" size="xs" className="font-semibold text-sidebar-foreground/60 uppercase tracking-widest truncate">
+                          <Text
+                            as="p"
+                            size="xs"
+                            className="font-semibold text-sidebar-foreground/60 uppercase tracking-widest truncate"
+                          >
                             {topic.name}
                           </Text>
                         </Button>
@@ -121,7 +125,9 @@ export const SidebarContent = ({ initialTopics, ungrouped }: SidebarContentProps
                       <DeleteTopicButton topicId={topic.id} />
                     </div>
 
-                    <div className={`transition-opacity duration-200 ease-in-out ${collapsedTopics.has(topic.id) ? 'opacity-0 h-0 overflow-hidden pointer-events-none' : 'opacity-100'}`}>
+                    <div
+                      className={`transition-opacity duration-200 ease-in-out ${collapsedTopics.has(topic.id) ? 'opacity-0 h-0 overflow-hidden pointer-events-none' : 'opacity-100'}`}
+                    >
                       <Droppable droppableId={`posts-${topic.id}`} type="POST">
                         {(postsProvided) => (
                           <div
@@ -130,10 +136,20 @@ export const SidebarContent = ({ initialTopics, ungrouped }: SidebarContentProps
                             className="flex flex-col gap-0.5"
                           >
                             {topic.posts.length === 0 ? (
-                              <Text as="p" size="sm" className="text-sidebar-foreground/40 pl-8 py-1.5 italic">No pages yet</Text>
+                              <Text
+                                as="p"
+                                size="sm"
+                                className="text-sidebar-foreground/40 pl-8 py-1.5 italic"
+                              >
+                                No pages yet
+                              </Text>
                             ) : (
                               topic.posts.map((post, postIndex) => (
-                                <Draggable key={post.id} draggableId={`post-${post.id}`} index={postIndex}>
+                                <Draggable
+                                  key={post.id}
+                                  draggableId={`post-${post.id}`}
+                                  index={postIndex}
+                                >
                                   {(postDraggable) => (
                                     <div
                                       ref={postDraggable.innerRef}
@@ -146,9 +162,14 @@ export const SidebarContent = ({ initialTopics, ungrouped }: SidebarContentProps
                                       >
                                         <GripVertical size={13} />
                                       </div>
-                                      <SidebarNavLink href={`/posts/${post.id}`} className="flex-1 min-w-0">
+                                      <SidebarNavLink
+                                        href={`/posts/${post.id}`}
+                                        className="flex-1 min-w-0"
+                                      >
                                         <FileText size={15} className="shrink-0 opacity-70" />
-                                        <Text as="span" size="sm" className="truncate">{post.title}</Text>
+                                        <Text as="span" size="sm" className="truncate">
+                                          {post.title}
+                                        </Text>
                                       </SidebarNavLink>
                                     </div>
                                   )}
@@ -181,7 +202,11 @@ export const SidebarContent = ({ initialTopics, ungrouped }: SidebarContentProps
         <div>
           {topics.length > 0 && (
             <div className="px-2 py-1 mb-0.5">
-              <Text as="p" size="xs" className="font-semibold text-sidebar-foreground/50 uppercase tracking-widest">
+              <Text
+                as="p"
+                size="xs"
+                className="font-semibold text-sidebar-foreground/50 uppercase tracking-widest"
+              >
                 Other
               </Text>
             </div>
@@ -190,7 +215,9 @@ export const SidebarContent = ({ initialTopics, ungrouped }: SidebarContentProps
             {ungrouped.map((post) => (
               <SidebarNavLink key={post.id} href={`/posts/${post.id}`}>
                 <FileText size={15} className="shrink-0 opacity-70" />
-                <Text as="span" size="sm" className="truncate">{post.title}</Text>
+                <Text as="span" size="sm" className="truncate">
+                  {post.title}
+                </Text>
               </SidebarNavLink>
             ))}
           </div>
@@ -198,7 +225,9 @@ export const SidebarContent = ({ initialTopics, ungrouped }: SidebarContentProps
       )}
 
       {topics.length === 0 && ungrouped.length === 0 && (
-        <Text as="p" size="sm" className="text-sidebar-foreground/40 px-2 py-1">No pages yet</Text>
+        <Text as="p" size="sm" className="text-sidebar-foreground/40 px-2 py-1">
+          No pages yet
+        </Text>
       )}
 
       <div className="pt-3 mt-8 ml-3 mr-1 flex flex-col gap-0.5 border-t border-sidebar-border items-start">

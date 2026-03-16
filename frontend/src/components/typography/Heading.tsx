@@ -17,7 +17,13 @@ const sizeClasses: Record<HeadingSize, string> = {
   xl: 'text-6xl font-bold leading-tight tracking-tight',
 }
 
-export const Heading = ({ as: Tag = 'h2', size = 'md', className, children, ...props }: HeadingProps) => {
+export const Heading = ({
+  as: Tag = 'h2',
+  size = 'md',
+  className,
+  children,
+  ...props
+}: HeadingProps) => {
   return (
     <Tag className={cn(sizeClasses[size], className)} {...props}>
       {children}
