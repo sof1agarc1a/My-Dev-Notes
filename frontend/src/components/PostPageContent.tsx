@@ -39,7 +39,7 @@ export const PostPageContent = ({ post: initialPost, topics }: PostPageContentPr
   }
 
   return isEditing ? (
-    <div className="max-w-5xl mx-auto px-12 pt-16 pb-24">
+    <div className="max-w-5xl mx-auto px-12 pt-16 pb-48">
       <PostForm
         post={currentPost}
         topics={topics}

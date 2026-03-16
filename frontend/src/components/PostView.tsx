@@ -5,6 +5,7 @@ import { DeletePostButton } from '@/components/DeletePostButton'
 import { Button } from '@/components/ui/button'
 import { Heading } from '@/components/typography/Heading'
 import { Text } from '@/components/typography/Text'
+import { Separator } from '@/components/ui/separator'
 import { Pencil } from 'lucide-react'
 import { RichTextContent } from '@/components/RichTextContent'
 import { CodeBlock } from '@/components/CodeBlock'
@@ -28,7 +29,7 @@ export const PostView = ({ post, topics, onEdit }: PostViewProps) => {
 
   return (
     <div className="max-w-5xl mx-auto px-12 pt-16 pb-24">
-      <div className="flex items-start justify-between gap-6 mb-20.25">
+      <div className="flex items-start justify-between gap-6 mb-20">
         <div className="min-w-0">
           {topicName && (
             <div className="h-12 flex items-center">
@@ -53,33 +54,47 @@ export const PostView = ({ post, topics, onEdit }: PostViewProps) => {
         </div>
       </div>
 
-      <div className="flex flex-col gap-12">
-        {post.sections.map((section) => (
-          <div key={section.id}>
-            {section.headline && (
-              <Heading as="h2" size="md" className="text-foreground px-3 py-2 -mx-3 -mt-2 mb-4">
-                {section.headline}
+      <div className="flex flex-col gap-10">
+        {post.blocks.map((block) => {
+          if (block.type === 'heading') {
+            return (
+              <Heading key={block.id} as="h2" size="md" className="text-foreground">
+                {block.content}
               </Heading>
-            )}
-            <RichTextContent
-              content={section.content}
-              className="text-base leading-6.5 text-foreground/75 px-3 py-2 -mx-3 -mt-2"
-            />
-            {section.code && <CodeBlock code={section.code} codeLanguage={section.codeLanguage} />}
-            {section.imageUrl && (
-              <div className="mt-6">
-                <Image
-                  src={section.imageUrl}
-                  alt="Section image"
-                  width={0}
-                  height={0}
-                  sizes="100vw"
-                  className="w-full h-auto rounded-lg border border-border"
-                />
-              </div>
-            )}
-          </div>
-        ))}
+            )
+          }
+          if (block.type === 'text') {
+            return (
+              <RichTextContent
+                key={block.id}
+                content={block.content}
+                className="text-base leading-6.5 text-foreground/75"
+              />
+            )
+          }
+          if (block.type === 'code') {
+            return (
+              <CodeBlock key={block.id} code={block.content} codeLanguage={block.codeLanguage} />
+            )
+          }
+          if (block.type === 'image' && block.imageUrl) {
+            return (
+              <Image
+                key={block.id}
+                src={block.imageUrl}
+                alt="Block image"
+                width={0}
+                height={0}
+                sizes="100vw"
+                className="w-full h-auto rounded-lg border border-border"
+              />
+            )
+          }
+          if (block.type === 'divider') {
+            return <Separator key={block.id} />
+          }
+          return null
+        })}
       </div>
     </div>
   )

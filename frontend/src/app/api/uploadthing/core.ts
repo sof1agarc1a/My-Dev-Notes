@@ -3,7 +3,7 @@ import { createUploadthing, type FileRouter } from 'uploadthing/next'
 const uploadThing = createUploadthing()
 
 export const fileRouter = {
-  sectionImage: uploadThing({ image: { maxFileSize: '4MB', maxFileCount: 1 } }).onUploadComplete(
+  blockImage: uploadThing({ image: { maxFileSize: '4MB', maxFileCount: 1 } }).onUploadComplete(
     ({ file }) => {
       return { url: file.ufsUrl }
     }

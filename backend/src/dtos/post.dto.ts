@@ -1,14 +1,15 @@
 import { z } from 'zod'
 
+const BlockTypeEnum = z.enum(['heading', 'text', 'image', 'code', 'divider'])
+
 export const CreatePostDto = z.object({
   title: z.string().min(1, 'Title is required').max(255),
   topicId: z.number().int().positive().nullable().optional(),
-  sections: z
+  blocks: z
     .array(
       z.object({
-        headline: z.string().max(255),
-        content: z.string(),
-        code: z.string().nullable().optional(),
+        type: BlockTypeEnum,
+        content: z.string().default(''),
         codeLanguage: z.string().max(50).nullable().optional(),
         imageUrl: z.string().nullable().optional(),
       })

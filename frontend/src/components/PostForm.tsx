@@ -4,14 +4,24 @@ import { useEffect, useId, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Controller, useFieldArray, useForm } from 'react-hook-form'
 import { DragDropContext, Draggable, Droppable, DropResult } from '@hello-pangea/dnd'
-import { api, Post, Topic } from '@/lib/api'
+import { api, BlockType, Post, Topic } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select'
-import { SectionFormItem } from '@/components/SectionFormItem'
 import { Text } from '@/components/typography/Text'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { FilePlus, PlusCircle, Save } from 'lucide-react'
+import { BlockFormItem, BlockDraft } from '@/components/BlockFormItem'
+import {
+  FilePlus,
+  Heading,
+  AlignLeft,
+  Code,
+  ImageIcon,
+  Minus,
+  Save,
+  LayoutGrid,
+} from 'lucide-react'
+import { Separator } from '@/components/ui/separator'
 
 interface PostFormProps {
   post?: Post
@@ -21,27 +31,17 @@ interface PostFormProps {
   onCancel?: () => void
 }
 
-interface SectionDraft {
-  sectionId: string
-  headline: string
-  content: string
-  code: string
-  codeLanguage: string
-  imageUrl: string
-}
-
 interface FormValues {
   title: string
   topicId: number | null
-  sections: SectionDraft[]
+  blocks: BlockDraft[]
 }
 
-function newSection(): SectionDraft {
+function newBlock(type: BlockType): BlockDraft {
   return {
-    sectionId: crypto.randomUUID(),
-    headline: '',
+    blockId: crypto.randomUUID(),
+    type,
     content: '',
-    code: '',
     codeLanguage: 'typescript',
     imageUrl: '',
   }
@@ -55,7 +55,7 @@ export const PostForm = ({
   onCancel,
 }: PostFormProps) => {
   const router = useRouter()
-  const initialSectionId = useId()
+  const initialBlockId = useId()
 
   const {
     register,
@@ -67,25 +67,23 @@ export const PostForm = ({
     defaultValues: {
       title: post?.title ?? '',
       topicId: post?.topicId ?? initialTopicId,
-      sections: post?.sections?.length
-        ? post.sections.map((section) => ({
-            sectionId: String(section.id),
-            headline: section.headline,
-            content: section.content,
-            code: section.code ?? '',
-            codeLanguage: section.codeLanguage ?? 'typescript',
-            imageUrl: section.imageUrl ?? '',
+      blocks: post?.blocks?.length
+        ? post.blocks.map((block) => ({
+            blockId: String(block.id),
+            type: block.type,
+            content: block.content,
+            codeLanguage: block.codeLanguage ?? 'typescript',
+            imageUrl: block.imageUrl ?? '',
           }))
-        : [{ ...newSection(), sectionId: initialSectionId }],
+        : [{ ...newBlock('text'), blockId: initialBlockId }],
     },
   })
 
-  const { fields, append, remove, move } = useFieldArray({ control, name: 'sections' })
+  const { fields, append, remove, move } = useFieldArray({ control, name: 'blocks' })
 
   const [showDiscardDialog, setShowDiscardDialog] = useState(false)
   const pendingNavRef = useRef<(() => void) | null>(null)
 
-  // Block navigation when there are unsaved changes
   useEffect(() => {
     if (!isDirty) {
       return
@@ -96,7 +94,6 @@ export const PostForm = ({
     }
     window.addEventListener('beforeunload', handleBeforeUnload)
 
-    // Intercept all link clicks before Next.js router handles them
     const handleLinkClick = (event: MouseEvent) => {
       const anchor = (event.target as HTMLElement).closest('a')
       if (!anchor) {
@@ -151,58 +148,51 @@ export const PostForm = ({
   }
 
   const onSubmit = async (values: FormValues) => {
-    const filledSections = values.sections.filter(
-      (section) => section.headline.trim() || section.content.trim() || section.code?.trim()
-    )
-
     try {
       if (post) {
         await api.posts.update(post.id, { title: values.title, topicId: values.topicId })
 
-        const existingIds = new Set(post.sections.map((section) => String(section.id)))
-        const toCreate = filledSections.filter((section) => !existingIds.has(section.sectionId))
-        const toUpdate = filledSections.filter((section) => existingIds.has(section.sectionId))
-        const toDelete = post.sections.filter(
-          (section) => !filledSections.find((draft) => draft.sectionId === String(section.id))
+        const existingIds = new Set(post.blocks.map((block) => String(block.id)))
+        const toCreate = values.blocks.filter((block) => !existingIds.has(block.blockId))
+        const toUpdate = values.blocks.filter((block) => existingIds.has(block.blockId))
+        const toDelete = post.blocks.filter(
+          (block) => !values.blocks.find((draft) => draft.blockId === String(block.id))
         )
 
-        const createdSections = await Promise.all(
-          toCreate.map((s) =>
-            api.sections.create(post.id, {
-              headline: s.headline,
-              content: s.content,
-              code: s.code || null,
-              codeLanguage: s.codeLanguage || null,
-              imageUrl: s.imageUrl || null,
+        const createdBlocks = await Promise.all(
+          toCreate.map((block) =>
+            api.blocks.create(post.id, {
+              type: block.type,
+              content: block.content,
+              codeLanguage: block.codeLanguage || null,
+              imageUrl: block.imageUrl || null,
             })
           )
         )
 
         await Promise.all([
-          ...toDelete.map((s) => api.sections.delete(post.id, s.id)),
-          ...toUpdate.map((s) =>
-            api.sections.update(post.id, Number(s.sectionId), {
-              headline: s.headline,
-              content: s.content,
-              code: s.code || null,
-              codeLanguage: s.codeLanguage || null,
-              imageUrl: s.imageUrl || null,
+          ...toDelete.map((block) => api.blocks.delete(post.id, block.id)),
+          ...toUpdate.map((block) =>
+            api.blocks.update(post.id, Number(block.blockId), {
+              content: block.content,
+              codeLanguage: block.codeLanguage || null,
+              imageUrl: block.imageUrl || null,
             })
           ),
         ])
 
         const createdIdMap = new Map(
-          toCreate.map((draft, i) => [draft.sectionId, createdSections[i].id])
+          toCreate.map((draft, i) => [draft.blockId, createdBlocks[i].id])
         )
-        const orderedIds = filledSections
-          .map((section) =>
-            existingIds.has(section.sectionId)
-              ? Number(section.sectionId)
-              : (createdIdMap.get(section.sectionId) ?? null)
+        const orderedIds = values.blocks
+          .map((block) =>
+            existingIds.has(block.blockId)
+              ? Number(block.blockId)
+              : (createdIdMap.get(block.blockId) ?? null)
           )
           .filter((id): id is number => id !== null)
 
-        await api.sections.reorder(post.id, orderedIds)
+        await api.blocks.reorder(post.id, orderedIds)
 
         if (onSuccess) {
           await onSuccess()
@@ -214,11 +204,11 @@ export const PostForm = ({
         const created = await api.posts.create({
           title: values.title,
           topicId: values.topicId,
-          sections: filledSections.map((s) => ({
-            headline: s.headline,
-            content: s.content,
-            code: s.code || null,
-            codeLanguage: s.codeLanguage || null,
+          blocks: values.blocks.map((block) => ({
+            type: block.type,
+            content: block.content,
+            codeLanguage: block.codeLanguage || null,
+            imageUrl: block.imageUrl || null,
           })),
         })
         router.push(`/posts/${created.id}`)
@@ -232,7 +222,7 @@ export const PostForm = ({
   return (
     <>
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
-        <div className="flex items-start justify-between gap-6 mb-29">
+        <div className="flex items-start justify-between gap-6 mb-21.5">
           <div className="min-w-0 flex-1">
             {topics.length > 0 && (
               <div className="flex items-center gap-3">
@@ -321,23 +311,21 @@ export const PostForm = ({
         )}
 
         <DragDropContext onDragEnd={handleDragEnd}>
-          <Droppable droppableId="sections">
+          <Droppable droppableId="blocks">
             {(provided) => (
               <div
                 {...provided.droppableProps}
                 ref={provided.innerRef}
-                className="flex flex-col gap-12"
+                className="flex flex-col gap-10"
               >
                 {fields.map((field, index) => (
-                  <Draggable key={field.sectionId} draggableId={field.sectionId} index={index}>
+                  <Draggable key={field.blockId} draggableId={field.blockId} index={index}>
                     {(draggableProvided) => (
-                      <SectionFormItem
+                      <BlockFormItem
                         control={control}
                         index={index}
                         provided={draggableProvided}
                         onRemove={() => remove(index)}
-                        canRemove={true}
-                        isLast={index === fields.length - 1}
                       />
                     )}
                   </Draggable>
@@ -348,15 +336,71 @@ export const PostForm = ({
           </Droppable>
         </DragDropContext>
 
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={() => append(newSection())}
-          className="self-start text-md gap-2"
-        >
-          <PlusCircle size={18} />
-          Add section
-        </Button>
+        <div className="flex flex-col gap-3 mt-10">
+          <Separator />
+          <div className="flex items-center gap-1.5 mt-12">
+            <LayoutGrid size={13} className="text-muted-foreground" />
+            <Text
+              as="span"
+              size="xs"
+              className="text-muted-foreground font-semibold uppercase tracking-widest leading-none"
+            >
+              Add block
+            </Text>
+          </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => append(newBlock('heading'))}
+              className="gap-1.5"
+            >
+              <Heading size={13} />
+              Heading
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => append(newBlock('text'))}
+              className="gap-1.5"
+            >
+              <AlignLeft size={13} />
+              Content
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => append(newBlock('code'))}
+              className="gap-1.5"
+            >
+              <Code size={13} />
+              Code
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => append(newBlock('image'))}
+              className="gap-1.5"
+            >
+              <ImageIcon size={13} />
+              Image
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => append(newBlock('divider'))}
+              className="gap-1.5"
+            >
+              <Minus size={13} />
+              Divider
+            </Button>
+          </div>
+        </div>
       </form>
 
       <ConfirmDialog

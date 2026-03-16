@@ -1,24 +1,25 @@
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001/api'
 
-export interface Section {
+export type BlockType = 'heading' | 'text' | 'image' | 'code' | 'divider'
+
+export interface Block {
   id: number
-  headline: string
+  postId: number
+  type: BlockType
   content: string
-  code: string | null
   codeLanguage: string | null
   imageUrl: string | null
   order: number
-  postId: number
 }
 
 export interface Post {
   id: number
   title: string
   topicId: number | null
-  sections: Section[]
+  blocks: Block[]
   createdAt: string
   updatedAt: string
-  _count?: { sections: number }
+  _count?: { blocks: number }
 }
 
 export interface Topic {
@@ -52,7 +53,12 @@ export const api = {
     create: (data: {
       title: string
       topicId?: number | null
-      sections?: { headline: string; content: string }[]
+      blocks?: {
+        type: BlockType
+        content: string
+        codeLanguage?: string | null
+        imageUrl?: string | null
+      }[]
     }) => request<Post>('/posts', { method: 'POST', body: JSON.stringify(data) }),
     update: (id: number, data: { title: string; topicId?: number | null }) =>
       request<Post>(`/posts/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
@@ -70,39 +76,26 @@ export const api = {
     reorder: (ids: number[]) =>
       request<void>('/topics/reorder', { method: 'PATCH', body: JSON.stringify({ ids }) }),
   },
-  sections: {
+  blocks: {
     create: (
       postId: number,
-      data: {
-        headline: string
-        content: string
-        code?: string | null
-        codeLanguage?: string | null
-        imageUrl?: string | null
-      }
-    ) =>
-      request<Section>(`/posts/${postId}/sections`, { method: 'POST', body: JSON.stringify(data) }),
+      data: { type: BlockType; content?: string; codeLanguage?: string | null; imageUrl?: string | null }
+    ) => request<Block>(`/posts/${postId}/blocks`, { method: 'POST', body: JSON.stringify(data) }),
     update: (
       postId: number,
       id: number,
-      data: {
-        headline?: string
-        content?: string
-        code?: string | null
-        codeLanguage?: string | null
-        imageUrl?: string | null
-      }
+      data: { content?: string; codeLanguage?: string | null; imageUrl?: string | null }
     ) =>
-      request<Section>(`/posts/${postId}/sections/${id}`, {
+      request<Block>(`/posts/${postId}/blocks/${id}`, {
         method: 'PUT',
         body: JSON.stringify(data),
       }),
     delete: (postId: number, id: number) =>
-      request<void>(`/posts/${postId}/sections/${id}`, { method: 'DELETE' }),
-    reorder: (postId: number, sectionIds: number[]) =>
-      request<Section[]>(`/posts/${postId}/sections/reorder`, {
+      request<void>(`/posts/${postId}/blocks/${id}`, { method: 'DELETE' }),
+    reorder: (postId: number, blockIds: number[]) =>
+      request<Block[]>(`/posts/${postId}/blocks/reorder`, {
         method: 'PUT',
-        body: JSON.stringify({ sectionIds }),
+        body: JSON.stringify({ blockIds }),
       }),
   },
 }

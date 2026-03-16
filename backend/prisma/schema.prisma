@@ -6,6 +6,14 @@ datasource db {
   provider = "postgresql"
 }
 
+enum BlockType {
+  heading
+  text
+  image
+  code
+  divider
+}
+
 model Topic {
   id        Int      @id @default(autoincrement())
   name      String
@@ -15,24 +23,25 @@ model Topic {
 }
 
 model Post {
-  id        Int       @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   title     String
   topicId   Int?
-  order     Float     @default(0)
-  topic     Topic?    @relation(fields: [topicId], references: [id])
-  sections  Section[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  order     Float    @default(0)
+  topic     Topic?   @relation(fields: [topicId], references: [id])
+  blocks    Block[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-model Section {
-  id           Int     @id @default(autoincrement())
-  headline     String
-  content      String
-  code         String?
+model Block {
+  id           Int       @id @default(autoincrement())
+  postId       Int
+  type         BlockType
+  content      String    @default("")
   codeLanguage String?
   imageUrl     String?
-  order        Float   @default(0)
-  postId       Int
-  post         Post    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  order        Float     @default(0)
+  post         Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
 }

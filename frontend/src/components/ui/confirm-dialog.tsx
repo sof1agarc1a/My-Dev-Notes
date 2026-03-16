@@ -63,7 +63,7 @@ export const ConfirmDialog = ({
             )}
             <Button variant="destructive" onClick={onConfirm} disabled={loading}>
               {showDeleteIcon && <Trash2 size={14} />}
-              {loading ? 'Deleting...' : confirmLabel}
+              {confirmLabel}
             </Button>
             {onSave && (
               <Button

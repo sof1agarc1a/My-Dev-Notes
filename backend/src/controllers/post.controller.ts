@@ -18,8 +18,8 @@ export async function reorderPosts(req: Request, res: Response, next: NextFuncti
 export async function getAllPosts(_req: Request, res: Response, next: NextFunction) {
   try {
     const posts = await prisma.post.findMany({
-      orderBy: { createdAt: 'desc' },
-      include: { _count: { select: { sections: true } } },
+      orderBy: { order: 'asc' },
+      include: { _count: { select: { blocks: true } } },
     })
     res.json(posts)
   } catch (err) {
@@ -33,7 +33,7 @@ export async function getPostById(req: Request, res: Response, next: NextFunctio
 
     const post = await prisma.post.findUnique({
       where: { id },
-      include: { sections: { orderBy: { order: 'asc' } } },
+      include: { blocks: { orderBy: { order: 'asc' } } },
     })
 
     if (!post) {
@@ -54,20 +54,19 @@ export async function createPost(req: Request, res: Response, next: NextFunction
       data: {
         title: body.title,
         topicId: body.topicId ?? null,
-        sections: body.sections
+        blocks: body.blocks
           ? {
-              create: body.sections.map((s, i) => ({
-                headline: s.headline,
-                content: s.content,
-                code: s.code ?? null,
-                codeLanguage: s.codeLanguage ?? null,
-                imageUrl: s.imageUrl ?? null,
+              create: body.blocks.map((b, i) => ({
+                type: b.type,
+                content: b.content ?? '',
+                codeLanguage: b.codeLanguage ?? null,
+                imageUrl: b.imageUrl ?? null,
                 order: (i + 1) * 1.0,
               })),
             }
           : undefined,
       },
-      include: { sections: { orderBy: { order: 'asc' } } },
+      include: { blocks: { orderBy: { order: 'asc' } } },
     })
 
     res.status(201).json(post)
@@ -80,6 +79,7 @@ export async function updatePost(req: Request, res: Response, next: NextFunction
   try {
     const id = Number(req.params.id)
     const body = req.body as UpdatePostInput
+
     const existing = await prisma.post.findUnique({ where: { id } })
     if (!existing) {
       throw new AppError(404, 'Post not found')
@@ -87,8 +87,11 @@ export async function updatePost(req: Request, res: Response, next: NextFunction
 
     const post = await prisma.post.update({
       where: { id },
-      data: { title: body.title, ...(body.topicId !== undefined && { topicId: body.topicId }) },
-      include: { sections: { orderBy: { order: 'asc' } } },
+      data: {
+        title: body.title,
+        ...(body.topicId !== undefined && { topicId: body.topicId }),
+      },
+      include: { blocks: { orderBy: { order: 'asc' } } },
     })
 
     res.json(post)
@@ -100,8 +103,8 @@ export async function updatePost(req: Request, res: Response, next: NextFunction
 export async function deletePost(req: Request, res: Response, next: NextFunction) {
   try {
     const id = Number(req.params.id)
-    const existing = await prisma.post.findUnique({ where: { id } })
 
+    const existing = await prisma.post.findUnique({ where: { id } })
     if (!existing) {
       throw new AppError(404, 'Post not found')
     }

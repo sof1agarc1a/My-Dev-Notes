@@ -9,7 +9,7 @@ import {
   deletePost,
   reorderPosts,
 } from '../controllers/post.controller'
-import sectionRoutes from './section.routes'
+import blockRoutes from './block.routes'
 
 const router = Router()
 
@@ -20,6 +20,6 @@ router.get('/:id', getPostById)
 router.put('/:id', validate(UpdatePostDto), updatePost)
 router.delete('/:id', deletePost)
 
-router.use('/:postId/sections', sectionRoutes)
+router.use('/:postId/blocks', blockRoutes)
 
 export default router
