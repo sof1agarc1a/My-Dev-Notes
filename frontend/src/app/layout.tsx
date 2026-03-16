@@ -9,7 +9,7 @@ const nunitoSans = Nunito_Sans({
 })
 
 export const metadata: Metadata = {
-  title: 'My Notes',
+  title: 'My Dev Wiki',
   description: 'Personal notes and learnings',
 }
 

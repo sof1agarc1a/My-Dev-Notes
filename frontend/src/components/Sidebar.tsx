@@ -39,14 +39,13 @@ export const Sidebar = async () => {
   return (
     <aside className="w-72 h-screen bg-sidebar border-r border-sidebar-border flex flex-col shrink-0">
       <div className="mx-5 pt-5 pb-3 border-b border-sidebar-border">
-        <Link
-          href="/"
-          className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg cursor-pointer"
-        >
+        <Link href="/" className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg cursor-pointer">
           <div className="flex items-center justify-center w-7 h-7 rounded-md bg-foreground/90 text-background shrink-0">
             <BookOpen size={15} />
           </div>
-          <Text as="span" size="lg" className="font-sans font-bold text-sidebar-foreground">My Notes</Text>
+          <Text as="span" size="lg" className="font-sans font-bold text-sidebar-foreground">
+            My Dev Wiki
+          </Text>
         </Link>
       </div>
 
@@ -56,7 +55,9 @@ export const Sidebar = async () => {
           className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-[15px] font-medium text-sidebar-foreground bg-brand hover:bg-brand-hover transition-colors cursor-pointer w-full"
         >
           <Plus size={16} className="shrink-0" />
-          <Text as="span" size="sm">New page</Text>
+          <Text as="span" size="sm">
+            New page
+          </Text>
         </Link>
       </div>
 
