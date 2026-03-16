@@ -22,7 +22,14 @@ export async function createSection(req: Request, res: Response, next: NextFunct
     const order = last ? last.order + 1.0 : 1.0
 
     const section = await prisma.section.create({
-      data: { headline: body.headline, content: body.content, code: body.code ?? null, codeLanguage: body.codeLanguage ?? null, order, postId },
+      data: {
+        headline: body.headline,
+        content: body.content,
+        code: body.code ?? null,
+        codeLanguage: body.codeLanguage ?? null,
+        order,
+        postId,
+      },
     })
 
     res.status(201).json(section)
@@ -69,7 +76,7 @@ export async function deleteSection(req: Request, res: Response, next: NextFunct
     }
 
     await prisma.section.delete({ where: { id } })
-    
+
     res.status(204).send()
   } catch (err) {
     next(err)

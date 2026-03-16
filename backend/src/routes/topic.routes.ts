@@ -1,7 +1,13 @@
 import { Router } from 'express'
 import { validate } from '../middleware/validate'
 import { CreateTopicDto, UpdateTopicDto, ReorderTopicsDto } from '../dtos/topic.dto'
-import { getAllTopics, createTopic, updateTopic, deleteTopic, reorderTopics } from '../controllers/topic.controller'
+import {
+  getAllTopics,
+  createTopic,
+  updateTopic,
+  deleteTopic,
+  reorderTopics,
+} from '../controllers/topic.controller'
 
 const router = Router()
 

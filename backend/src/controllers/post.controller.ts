@@ -49,7 +49,7 @@ export async function getPostById(req: Request, res: Response, next: NextFunctio
 export async function createPost(req: Request, res: Response, next: NextFunction) {
   try {
     const body = req.body as CreatePostInput
-    
+
     const post = await prisma.post.create({
       data: {
         title: body.title,
@@ -106,7 +106,7 @@ export async function deletePost(req: Request, res: Response, next: NextFunction
     }
 
     await prisma.post.delete({ where: { id } })
-    
+
     res.status(204).send()
   } catch (err) {
     next(err)

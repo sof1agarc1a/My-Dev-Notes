@@ -1,7 +1,14 @@
 import { Router } from 'express'
 import { validate } from '../middleware/validate'
 import { CreatePostDto, UpdatePostDto, ReorderPostsDto } from '../dtos/post.dto'
-import { getAllPosts, getPostById, createPost, updatePost, deletePost, reorderPosts } from '../controllers/post.controller'
+import {
+  getAllPosts,
+  getPostById,
+  createPost,
+  updatePost,
+  deletePost,
+  reorderPosts,
+} from '../controllers/post.controller'
 import sectionRoutes from './section.routes'
 
 const router = Router()
