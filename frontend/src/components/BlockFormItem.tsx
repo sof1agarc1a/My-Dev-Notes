@@ -23,6 +23,7 @@ import { RichTextEditor } from '@/components/RichTextEditor'
 import { CodeBlock } from '@/components/CodeBlock'
 import { Separator } from '@/components/ui/separator'
 import { useUploadThing } from '@/lib/uploadthing'
+import imageCompression from 'browser-image-compression'
 import { BlockType } from '@/lib/api'
 
 export interface BlockDraft {
@@ -77,7 +78,8 @@ export const BlockFormItem = ({ control, index, provided, onRemove }: BlockFormI
     if (!file) {
       return
     }
-    const result = await startUpload([file])
+    const compressed = await imageCompression(file, { maxSizeMB: 1, maxWidthOrHeight: 1920 })
+    const result = await startUpload([compressed])
     if (result?.[0]) {
       onChange(result[0].ufsUrl)
     }
