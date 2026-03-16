@@ -64,18 +64,44 @@ export const SidebarContent = ({ initialTopics, ungrouped }: SidebarContentProps
     }
 
     if (result.type === 'POST') {
-      const topicId = Number(result.source.droppableId.replace('posts-', ''))
-      const updatedTopics = topics.map((topic) => {
-        if (topic.id !== topicId) {
-          return topic
+      const sourceTopicId = Number(result.source.droppableId.replace('posts-', ''))
+      const destTopicId = Number(result.destination.droppableId.replace('posts-', ''))
+
+      if (sourceTopicId === destTopicId) {
+        const updatedTopics = topics.map((topic) => {
+          if (topic.id !== sourceTopicId) {
+            return topic
+          }
+          const posts = [...topic.posts]
+          const [moved] = posts.splice(result.source.index, 1)
+          posts.splice(result.destination!.index, 0, moved)
+          api.posts.reorder(posts.map((post) => post.id))
+          return { ...topic, posts }
+        })
+        setTopics(updatedTopics)
+      } else {
+        const sourceTopic = topics.find((topic) => topic.id === sourceTopicId)
+        if (!sourceTopic) {
+          return
         }
-        const posts = [...topic.posts]
-        const [moved] = posts.splice(result.source.index, 1)
-        posts.splice(result.destination!.index, 0, moved)
-        api.posts.reorder(posts.map((post) => post.id))
-        return { ...topic, posts }
-      })
-      setTopics(updatedTopics)
+        const movedPost = sourceTopic.posts[result.source.index]
+        const updatedTopics = topics.map((topic) => {
+          if (topic.id === sourceTopicId) {
+            const posts = [...topic.posts]
+            posts.splice(result.source.index, 1)
+            return { ...topic, posts }
+          }
+          if (topic.id === destTopicId) {
+            const posts = [...topic.posts]
+            posts.splice(result.destination!.index, 0, movedPost)
+            api.posts.reorder(posts.map((post) => post.id))
+            return { ...topic, posts }
+          }
+          return topic
+        })
+        setTopics(updatedTopics)
+        api.posts.update(movedPost.id, { title: movedPost.title, topicId: destTopicId })
+      }
     }
   }
 
@@ -199,6 +225,12 @@ export const SidebarContent = ({ initialTopics, ungrouped }: SidebarContentProps
         )}
       </Droppable>
 
+      {topics.length === 0 && ungrouped.length === 0 && (
+        <Text as="p" size="sm" className="ml-2 text-sidebar-foreground/40 px-2 py-1 italic">
+          No topics added yet
+        </Text>
+      )}
+
       {ungrouped.length > 0 && (
         <div>
           <div className="flex items-center justify-between px-2 py-1 mb-0.5">
@@ -226,11 +258,11 @@ export const SidebarContent = ({ initialTopics, ungrouped }: SidebarContentProps
           </div>
 
           <div
-            className={`transition-opacity duration-200 ease-in-out ${ungroupedCollapsed ? 'opacity-0 h-0 overflow-hidden pointer-events-none' : 'opacity-100'}`}
+            className={`px-6 pt-1 transition-opacity duration-200 ease-in-out ${ungroupedCollapsed ? 'opacity-0 h-0 overflow-hidden pointer-events-none' : 'opacity-100'}`}
           >
             <div className="flex flex-col gap-0.5">
               {ungrouped.map((post) => (
-                <SidebarNavLink key={post.id} href={`/posts/${post.id}`} className="pl-8">
+                <SidebarNavLink key={post.id} href={`/posts/${post.id}`}>
                   <FileText size={15} className="shrink-0 opacity-70" />
                   <Text as="span" size="sm" className="truncate">
                     {post.title}

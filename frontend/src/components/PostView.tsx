@@ -56,14 +56,14 @@ export const PostView = ({ post, topics, onEdit }: PostViewProps) => {
 
       <div className="flex flex-col gap-10">
         {post.blocks.map((block) => {
-          if (block.type === 'heading') {
+          if (block.type === 'heading' && block.content) {
             return (
               <Heading key={block.id} as="h2" size="md" className="text-foreground">
                 {block.content}
               </Heading>
             )
           }
-          if (block.type === 'text') {
+          if (block.type === 'text' && block.content) {
             return (
               <RichTextContent
                 key={block.id}
@@ -72,7 +72,7 @@ export const PostView = ({ post, topics, onEdit }: PostViewProps) => {
               />
             )
           }
-          if (block.type === 'code') {
+          if (block.type === 'code' && block.content) {
             return (
               <CodeBlock key={block.id} code={block.content} codeLanguage={block.codeLanguage} />
             )

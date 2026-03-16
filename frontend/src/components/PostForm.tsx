@@ -55,7 +55,10 @@ export const PostForm = ({
   onCancel,
 }: PostFormProps) => {
   const router = useRouter()
-  const initialBlockId = useId()
+  const initialHeadingBlockId = useId()
+  const initialTextBlockId = useId()
+  const initialCodeBlockId = useId()
+  const initialImageBlockId = useId()
 
   const {
     register,
@@ -75,7 +78,12 @@ export const PostForm = ({
             codeLanguage: block.codeLanguage ?? 'typescript',
             imageUrl: block.imageUrl ?? '',
           }))
-        : [{ ...newBlock('text'), blockId: initialBlockId }],
+        : [
+            { ...newBlock('heading'), blockId: initialHeadingBlockId },
+            { ...newBlock('text'), blockId: initialTextBlockId },
+            { ...newBlock('code'), blockId: initialCodeBlockId },
+            { ...newBlock('image'), blockId: initialImageBlockId },
+          ],
     },
   })
 
@@ -147,16 +155,32 @@ export const PostForm = ({
     move(result.source.index, result.destination.index)
   }
 
+  const isBlockEmpty = (block: BlockDraft) => {
+    if (block.type === 'divider') {
+      return false
+    }
+    if (block.type === 'image') {
+      return !block.imageUrl
+    }
+    return !block.content
+  }
+
   const onSubmit = async (values: FormValues) => {
     try {
       if (post) {
         await api.posts.update(post.id, { title: values.title, topicId: values.topicId })
 
         const existingIds = new Set(post.blocks.map((block) => String(block.id)))
-        const toCreate = values.blocks.filter((block) => !existingIds.has(block.blockId))
-        const toUpdate = values.blocks.filter((block) => existingIds.has(block.blockId))
+        const toCreate = values.blocks.filter(
+          (block) => !existingIds.has(block.blockId) && !isBlockEmpty(block)
+        )
+        const toUpdate = values.blocks.filter(
+          (block) => existingIds.has(block.blockId) && !isBlockEmpty(block)
+        )
         const toDelete = post.blocks.filter(
-          (block) => !values.blocks.find((draft) => draft.blockId === String(block.id))
+          (block) =>
+            !values.blocks.find((draft) => draft.blockId === String(block.id)) ||
+            values.blocks.some((draft) => draft.blockId === String(block.id) && isBlockEmpty(draft))
         )
 
         const createdBlocks = await Promise.all(
@@ -181,12 +205,14 @@ export const PostForm = ({
           ),
         ])
 
+        const deletedIds = new Set(toDelete.map((block) => String(block.id)))
         const createdIdMap = new Map(
           toCreate.map((draft, i) => [draft.blockId, createdBlocks[i].id])
         )
         const orderedIds = values.blocks
+          .filter((block) => !isBlockEmpty(block))
           .map((block) =>
-            existingIds.has(block.blockId)
+            existingIds.has(block.blockId) && !deletedIds.has(block.blockId)
               ? Number(block.blockId)
               : (createdIdMap.get(block.blockId) ?? null)
           )
@@ -204,12 +230,14 @@ export const PostForm = ({
         const created = await api.posts.create({
           title: values.title,
           topicId: values.topicId,
-          blocks: values.blocks.map((block) => ({
-            type: block.type,
-            content: block.content,
-            codeLanguage: block.codeLanguage || null,
-            imageUrl: block.imageUrl || null,
-          })),
+          blocks: values.blocks
+            .filter((block) => !isBlockEmpty(block))
+            .map((block) => ({
+              type: block.type,
+              content: block.content,
+              codeLanguage: block.codeLanguage || null,
+              imageUrl: block.imageUrl || null,
+            })),
         })
         router.push(`/posts/${created.id}`)
         router.refresh()
