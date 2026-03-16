@@ -21,7 +21,7 @@ export const SidebarNavLink = ({ href, children, className }: SidebarNavLinkProp
         'flex items-center gap-2.5 px-2 py-1.5 mr-5 rounded-lg text-[15px] transition-colors w-full',
         className,
         isActive
-          ? 'bg-brand text-sidebar-accent-foreground'
+          ? 'bg-brand text-brand-foreground'
           : 'text-sidebar-foreground hover:bg-brand/60'
       )}
     >

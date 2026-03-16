@@ -315,7 +315,7 @@ export const PostForm = ({
               type="submit"
               size="sm"
               disabled={!isDirty || isSubmitting}
-              className="bg-brand hover:bg-brand-hover text-foreground gap-1.5 disabled:opacity-40"
+              className="bg-brand hover:bg-brand-hover text-brand-foreground gap-1.5 disabled:opacity-40"
             >
               {post ? (
                 <>

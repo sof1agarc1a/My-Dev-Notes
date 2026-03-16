@@ -67,7 +67,7 @@ export const ConfirmDialog = ({
             </Button>
             {onSave && (
               <Button
-                className="bg-brand hover:bg-brand-hover text-foreground"
+                className="bg-brand hover:bg-brand-hover text-brand-foreground"
                 onClick={onSave}
                 disabled={loading}
               >

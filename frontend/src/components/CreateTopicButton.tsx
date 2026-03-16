@@ -63,9 +63,9 @@ export const CreateTopicButton = () => {
 
   return (
     <Button
-      variant="ghost"
+      variant="default"
       onClick={() => setOpen(true)}
-      className="flex justify-start gap-2.5 px-2 py-1.5 h-auto w-full text-[15px] font-medium bg-brand hover:bg-brand-hover text-foreground"
+      className="flex justify-start gap-2.5 px-2 py-1.5 h-auto w-full text-[15px] font-medium"
     >
       <Plus size={16} />
       New topic
