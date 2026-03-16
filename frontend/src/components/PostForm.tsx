@@ -1,6 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import { useId } from 'react'
 import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd'
 import { api, Post, Topic } from '@/lib/api'
@@ -51,6 +52,7 @@ export const PostForm = ({
   onCancel,
 }: PostFormProps) => {
   const router = useRouter()
+  const initialSectionId = useId()
 
   const {
     register,
@@ -70,7 +72,7 @@ export const PostForm = ({
             code: section.code ?? '',
             codeLanguage: section.codeLanguage ?? 'typescript',
           }))
-        : [newSection()],
+        : [{ ...newSection(), sectionId: initialSectionId }],
     },
   })
 
@@ -206,6 +208,7 @@ export const PostForm = ({
           <Input
             type="text"
             placeholder="Page title..."
+            autoFocus={!post}
             {...register('title')}
             className="border-none rounded-none bg-transparent mt-4 px-0 py-0 text-6xl font-bold leading-tight tracking-tight text-foreground shadow-none placeholder:text-foreground/20 focus-visible:ring-0 h-auto"
           />
@@ -257,7 +260,7 @@ export const PostForm = ({
               className="flex flex-col gap-12"
             >
               {fields.map((field, index) => (
-                <Draggable key={field.id} draggableId={field.id} index={index}>
+                <Draggable key={field.sectionId} draggableId={field.sectionId} index={index}>
                   {(draggableProvided) => (
                     <SectionFormItem
                       control={control}

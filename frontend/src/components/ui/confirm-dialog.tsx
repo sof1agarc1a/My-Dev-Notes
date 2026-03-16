@@ -1,6 +1,7 @@
 'use client'
 
 import { AlertDialog } from '@base-ui/react/alert-dialog'
+import { Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Heading } from '@/components/typography/Heading'
 import { Text } from '@/components/typography/Text'
@@ -27,8 +28,8 @@ export const ConfirmDialog = ({
   return (
     <AlertDialog.Root open={open} onOpenChange={onOpenChange}>
       <AlertDialog.Portal>
-        <AlertDialog.Backdrop className="fixed inset-0 bg-black/40 z-50" />
-        <AlertDialog.Popup className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-background rounded-lg p-6 shadow-xl w-full max-w-sm">
+        <AlertDialog.Backdrop className="fixed inset-0 bg-black/40 z-50 transition-opacity duration-200 data-starting-style:opacity-0 data-ending-style:opacity-0" />
+        <AlertDialog.Popup className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-background rounded-lg p-6 shadow-xl w-full max-w-sm transition-[opacity,transform,translate,scale] duration-100 ease-out data-starting-style:opacity-0 data-starting-style:[translate:-50%_calc(-50%+6px)] data-starting-style:scale-90 data-ending-style:opacity-0 data-ending-style:[translate:-50%_calc(-50%+6px)] data-ending-style:scale-90">
           <AlertDialog.Title render={<div />}>
             <Heading as="h2" size="sm">
               {title}
@@ -48,6 +49,7 @@ export const ConfirmDialog = ({
               }
             />
             <Button variant="destructive" onClick={onConfirm} disabled={loading}>
+              <Trash2 size={14} />
               {loading ? 'Deleting...' : confirmLabel}
             </Button>
           </div>

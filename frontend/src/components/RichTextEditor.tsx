@@ -3,7 +3,6 @@
 import { useEditor, EditorContent } from '@tiptap/react'
 import { BubbleMenu } from '@tiptap/react/menus'
 import StarterKit from '@tiptap/starter-kit'
-import Underline from '@tiptap/extension-underline'
 import Placeholder from '@tiptap/extension-placeholder'
 import {
   Bold,
@@ -72,7 +71,6 @@ export const RichTextEditor = ({
     immediatelyRender: false,
     extensions: [
       StarterKit.configure({ heading: { levels: [2, 3] } }),
-      Underline,
       Placeholder.configure({ placeholder }),
     ],
     content: parseContent(value),
@@ -151,7 +149,9 @@ export const RichTextEditor = ({
           </ToolbarButton>
         </BubbleMenu>
       )}
-      <EditorContent editor={editor} />
+      <div className="min-h-25 cursor-text" onClick={() => editor?.commands.focus()}>
+        <EditorContent editor={editor} />
+      </div>
     </div>
   )
 }

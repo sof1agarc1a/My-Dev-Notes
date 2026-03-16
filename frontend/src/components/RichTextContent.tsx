@@ -2,7 +2,6 @@
 
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import Underline from '@tiptap/extension-underline'
 import { cn } from '@/lib/utils'
 
 function parseContent(value: string) {
@@ -27,7 +26,7 @@ interface RichTextContentProps {
 export const RichTextContent = ({ content, className }: RichTextContentProps) => {
   const editor = useEditor({
     immediatelyRender: false,
-    extensions: [StarterKit, Underline],
+    extensions: [StarterKit],
     content: parseContent(content),
     editable: false,
   })

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/refs */
 'use client'
 
-import { Controller, Control } from 'react-hook-form'
+import { Controller, Control, useWatch } from 'react-hook-form'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -9,7 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/u
 import { Separator } from '@/components/ui/separator'
 import { Text } from '@/components/typography/Text'
 import { RichTextEditor } from '@/components/RichTextEditor'
-import { GripVertical, Trash2, Code } from 'lucide-react'
+import { GripVertical, Trash2, Code, AlignLeft } from 'lucide-react'
+import { CodeBlock } from '@/components/CodeBlock'
 import { DraggableProvided } from '@hello-pangea/dnd'
 
 interface FormValues {
@@ -56,6 +57,9 @@ export const SectionFormItem = ({
   canRemove,
   isLast,
 }: SectionFormItemProps) => {
+  const codeValue = useWatch({ control, name: `sections.${index}.code` })
+  const codeLanguageValue = useWatch({ control, name: `sections.${index}.codeLanguage` })
+
   return (
     <div ref={provided.innerRef} {...provided.draggableProps} className="relative group/section">
       <div
@@ -75,6 +79,17 @@ export const SectionFormItem = ({
           <Trash2 size={16} />
         </Button>
       )}
+
+      <div className="flex items-center gap-2 mb-4 mt-[-35.75px]">
+        <AlignLeft size={14} className="text-muted-foreground" />
+        <Text
+          as="span"
+          size="xs"
+          className="font-semibold text-muted-foreground uppercase tracking-widest"
+        >
+          Content
+        </Text>
+      </div>
 
       <div className="flex flex-col">
         <Controller
@@ -144,14 +159,15 @@ export const SectionFormItem = ({
               placeholder="Paste code here..."
               {...field}
               rows={6}
-              className="font-mono text-sm resize-none leading-6 bg-[#f6f8fa] border border-border rounded-lg"
+              className="font-mono text-sm resize-none leading-6 bg-[#f6f8fa] border border-border rounded-lg focus-visible:ring-0 focus-visible:border-foreground/40"
               spellCheck={false}
             />
           )}
         />
+        {codeValue && <CodeBlock code={codeValue} codeLanguage={codeLanguageValue ?? null} />}
       </div>
 
-      {!isLast && <Separator className="mt-12" />}
+      {!isLast && <Separator className="my-12" />}
     </div>
   )
 }

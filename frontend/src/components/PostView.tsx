@@ -1,62 +1,19 @@
 'use client'
 
-import { useState } from 'react'
-import hljs from 'highlight.js'
-import createDOMPurify from 'dompurify'
 import { Post, Topic } from '@/lib/api'
 import { DeletePostButton } from '@/components/DeletePostButton'
 import { Button } from '@/components/ui/button'
 import { Heading } from '@/components/typography/Heading'
 import { Text } from '@/components/typography/Text'
-import { Pencil, Code, Copy, Check } from 'lucide-react'
+import { Pencil } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
 import { RichTextContent } from '@/components/RichTextContent'
-
-const DOMPurify = typeof window !== 'undefined' ? createDOMPurify(window) : null
-
-const highlightCode = (code: string, language: string | null): string => {
-  try {
-    return hljs.highlight(code, { language: language ?? 'plaintext' }).value
-  } catch {
-    return hljs.highlightAuto(code).value
-  }
-}
+import { CodeBlock } from '@/components/CodeBlock'
 
 interface PostViewProps {
   post: Post
   topics: Topic[]
   onEdit: () => void
-}
-
-const CodeBlock = ({ code, codeLanguage }: { code: string; codeLanguage: string | null }) => {
-  const [copied, setCopied] = useState(false)
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(code)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
-
-  return (
-    <div className="relative mt-6 group/code">
-      <div className="absolute top-2.5 right-3 flex items-center gap-2 z-10">
-        <Code size={13} className="text-muted-foreground/50" />
-        <Button variant="ghost" size="icon" onClick={handleCopy} className="h-9 w-9 rounded-full">
-          {copied ? <Check size={13} /> : <Copy size={13} />}
-        </Button>
-      </div>
-      <pre className="rounded-lg overflow-x-auto text-sm leading-6 bg-[#f6f8fa]! border border-border">
-        <code
-          className={`language-${codeLanguage ?? 'plaintext'} hljs`}
-          dangerouslySetInnerHTML={{
-            __html:
-              DOMPurify?.sanitize(highlightCode(code, codeLanguage)) ??
-              highlightCode(code, codeLanguage),
-          }}
-        />
-      </pre>
-    </div>
-  )
 }
 
 export const PostView = ({ post, topics, onEdit }: PostViewProps) => {
