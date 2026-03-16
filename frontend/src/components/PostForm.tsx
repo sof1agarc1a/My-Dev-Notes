@@ -155,6 +155,7 @@ export const PostForm = ({
           })),
         })
         router.push(`/posts/${created.id}`)
+        router.refresh()
       }
     } catch (err) {
       setError('root', { message: err instanceof Error ? err.message : 'Something went wrong' })

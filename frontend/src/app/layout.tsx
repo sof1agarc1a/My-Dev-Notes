@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Nunito_Sans } from 'next/font/google'
 import './globals.css'
 import { Sidebar } from '@/components/Sidebar'
+import { PageTransition } from '@/components/PageTransition'
 
 const nunitoSans = Nunito_Sans({
   variable: '--font-sans',
@@ -23,7 +24,9 @@ export default function RootLayout({
       <body className="antialiased">
         <div className="flex h-screen overflow-hidden">
           <Sidebar />
-          <main className="flex-1 overflow-y-scroll">{children}</main>
+          <main className="flex-1 overflow-y-scroll">
+            <PageTransition>{children}</PageTransition>
+          </main>
         </div>
       </body>
     </html>

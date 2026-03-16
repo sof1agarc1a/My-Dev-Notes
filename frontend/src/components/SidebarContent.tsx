@@ -31,6 +31,7 @@ interface SidebarContentProps {
 export const SidebarContent = ({ initialTopics, ungrouped }: SidebarContentProps) => {
   const [topics, setTopics] = useState(initialTopics)
   const [collapsedTopics, setCollapsedTopics] = useState<Set<number>>(new Set())
+  const [ungroupedCollapsed, setUngroupedCollapsed] = useState(false)
 
   useEffect(() => {
     setTopics(initialTopics)
@@ -200,34 +201,45 @@ export const SidebarContent = ({ initialTopics, ungrouped }: SidebarContentProps
 
       {ungrouped.length > 0 && (
         <div>
-          {topics.length > 0 && (
-            <div className="px-2 py-1 mb-0.5">
-              <Text
-                as="p"
-                size="xs"
-                className="font-semibold text-sidebar-foreground/50 uppercase tracking-widest"
+          <div className="flex items-center justify-between px-2 py-1 mb-0.5">
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              <div className="w-3.5 shrink-0 -ml-1" />
+              <Button
+                type="button"
+                variant="transparent"
+                onClick={() => setUngroupedCollapsed((prev) => !prev)}
+                className="flex items-center justify-start gap-1.5 min-w-0 flex-1 h-auto p-0 active:translate-y-0"
               >
-                Other
-              </Text>
-            </div>
-          )}
-          <div className="flex flex-col gap-0.5">
-            {ungrouped.map((post) => (
-              <SidebarNavLink key={post.id} href={`/posts/${post.id}`}>
-                <FileText size={15} className="shrink-0 opacity-70" />
-                <Text as="span" size="sm" className="truncate">
-                  {post.title}
+                <ChevronRight
+                  size={13}
+                  className={`shrink-0 text-sidebar-foreground/40 transition-transform duration-200 ease-in-out ${ungroupedCollapsed ? '' : 'rotate-90'}`}
+                />
+                <Text
+                  as="p"
+                  size="xs"
+                  className="font-semibold text-sidebar-foreground/60 uppercase tracking-widest truncate"
+                >
+                  Ungrouped pages
                 </Text>
-              </SidebarNavLink>
-            ))}
+              </Button>
+            </div>
+          </div>
+
+          <div
+            className={`transition-opacity duration-200 ease-in-out ${ungroupedCollapsed ? 'opacity-0 h-0 overflow-hidden pointer-events-none' : 'opacity-100'}`}
+          >
+            <div className="flex flex-col gap-0.5">
+              {ungrouped.map((post) => (
+                <SidebarNavLink key={post.id} href={`/posts/${post.id}`} className="pl-8">
+                  <FileText size={15} className="shrink-0 opacity-70" />
+                  <Text as="span" size="sm" className="truncate">
+                    {post.title}
+                  </Text>
+                </SidebarNavLink>
+              ))}
+            </div>
           </div>
         </div>
-      )}
-
-      {topics.length === 0 && ungrouped.length === 0 && (
-        <Text as="p" size="sm" className="text-sidebar-foreground/40 px-2 py-1">
-          No pages yet
-        </Text>
       )}
 
       <div className="pt-3 mt-8 ml-3 mr-1 flex flex-col gap-0.5 border-t border-sidebar-border items-start">
