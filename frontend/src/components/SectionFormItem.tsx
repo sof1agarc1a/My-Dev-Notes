@@ -6,12 +6,13 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select'
-import { Separator } from '@/components/ui/separator'
 import { Text } from '@/components/typography/Text'
 import { RichTextEditor } from '@/components/RichTextEditor'
-import { GripVertical, Trash2, Code, AlignLeft } from 'lucide-react'
+import { GripVertical, Trash2, Code, AlignLeft, ImageIcon, Loader2 } from 'lucide-react'
 import { CodeBlock } from '@/components/CodeBlock'
+import { useUploadThing } from '@/lib/uploadthing'
 import { DraggableProvided } from '@hello-pangea/dnd'
+import Image from 'next/image'
 
 interface FormValues {
   title: string
@@ -22,6 +23,7 @@ interface FormValues {
     content: string
     code: string
     codeLanguage: string
+    imageUrl: string
   }[]
 }
 
@@ -55,13 +57,33 @@ export const SectionFormItem = ({
   provided,
   onRemove,
   canRemove,
-  isLast,
 }: SectionFormItemProps) => {
   const codeValue = useWatch({ control, name: `sections.${index}.code` })
   const codeLanguageValue = useWatch({ control, name: `sections.${index}.codeLanguage` })
+  const imageUrlValue = useWatch({ control, name: `sections.${index}.imageUrl` })
+
+  const { startUpload, isUploading } = useUploadThing('sectionImage')
+
+  const handleImageUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    onChange: (value: string) => void
+  ) => {
+    const file = e.target.files?.[0]
+    if (!file) {
+      return
+    }
+    const result = await startUpload([file])
+    if (result?.[0]) {
+      onChange(result[0].ufsUrl)
+    }
+  }
 
   return (
-    <div ref={provided.innerRef} {...provided.draggableProps} className="relative group/section">
+    <div
+      ref={provided.innerRef}
+      {...provided.draggableProps}
+      className="relative group/section mb-12"
+    >
       <div
         {...(provided.dragHandleProps ?? {})}
         className="absolute -left-10 top-3 text-muted-foreground/0 group-hover/section:text-muted-foreground/40 hover:text-muted-foreground! cursor-grab active:cursor-grabbing transition-colors"
@@ -165,9 +187,66 @@ export const SectionFormItem = ({
           )}
         />
         {codeValue && <CodeBlock code={codeValue} codeLanguage={codeLanguageValue ?? null} />}
-      </div>
 
-      {!isLast && <Separator className="my-12" />}
+        <div className="flex h-12 items-center gap-2 mt-8">
+          <ImageIcon size={14} className="text-muted-foreground" />
+          <Text
+            as="span"
+            size="xs"
+            className="font-semibold text-muted-foreground uppercase tracking-widest"
+          >
+            Image
+          </Text>
+        </div>
+
+        <Controller
+          control={control}
+          name={`sections.${index}.imageUrl`}
+          render={({ field }) => (
+            <div>
+              {imageUrlValue ? (
+                <div className="relative w-full group/image mt-1 rounded-lg border border-border overflow-hidden">
+                  <Image
+                    src={imageUrlValue}
+                    alt="Section image"
+                    width={0}
+                    height={0}
+                    sizes="100vw"
+                    className="w-full h-auto"
+                  />
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon-sm"
+                    onClick={() => field.onChange('')}
+                    className="w-9 h-9 rounded-full absolute top-2 right-2 opacity-0 group-hover/image:opacity-100 transition-opacity"
+                  >
+                    <Trash2 size={12} />
+                  </Button>
+                </div>
+              ) : (
+                <label className="mt-1 flex items-center justify-center gap-2 w-full border border-dashed border-border rounded-lg px-4 py-6 text-sm text-muted-foreground hover:border-foreground/30 hover:text-foreground/60 transition-colors cursor-pointer">
+                  {isUploading ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    <ImageIcon size={16} />
+                  )}
+                  <Text as="span" size="sm">
+                    {isUploading ? 'Uploading...' : 'Click to upload image'}
+                  </Text>
+                  <Input
+                    type="file"
+                    accept="image/*"
+                    className="sr-only"
+                    disabled={isUploading}
+                    onChange={(e) => handleImageUpload(e, field.onChange)}
+                  />
+                </label>
+              )}
+            </div>
+          )}
+        />
+      </div>
     </div>
   )
 }

@@ -5,13 +5,15 @@ export const CreateSectionDto = z.object({
   content: z.string().min(1, 'Content is required'),
   code: z.string().nullable().optional(),
   codeLanguage: z.string().max(50).nullable().optional(),
+  imageUrl: z.string().nullable().optional(),
 })
 
 export const UpdateSectionDto = z.object({
-  headline: z.string().min(1).max(255).optional(),
-  content: z.string().min(1).optional(),
+  headline: z.string().max(255).optional(),
+  content: z.string().optional(),
   code: z.string().nullable().optional(),
   codeLanguage: z.string().max(50).nullable().optional(),
+  imageUrl: z.string().nullable().optional(),
 })
 
 export const ReorderSectionsDto = z.object({

@@ -26,6 +26,7 @@ interface SectionDraft {
   content: string
   code: string
   codeLanguage: string
+  imageUrl: string
 }
 
 interface FormValues {
@@ -41,6 +42,7 @@ function newSection(): SectionDraft {
     content: '',
     code: '',
     codeLanguage: 'typescript',
+    imageUrl: '',
   }
 }
 
@@ -71,6 +73,7 @@ export const PostForm = ({
             content: section.content,
             code: section.code ?? '',
             codeLanguage: section.codeLanguage ?? 'typescript',
+            imageUrl: section.imageUrl ?? '',
           }))
         : [{ ...newSection(), sectionId: initialSectionId }],
     },
@@ -108,6 +111,7 @@ export const PostForm = ({
               content: s.content,
               code: s.code || null,
               codeLanguage: s.codeLanguage || null,
+              imageUrl: s.imageUrl || null,
             })
           )
         )
@@ -116,10 +120,11 @@ export const PostForm = ({
           ...toDelete.map((s) => api.sections.delete(post.id, s.id)),
           ...toUpdate.map((s) =>
             api.sections.update(post.id, Number(s.sectionId), {
-              headline: s.headline || undefined,
-              content: s.content || undefined,
+              headline: s.headline,
+              content: s.content,
               code: s.code || null,
               codeLanguage: s.codeLanguage || null,
+              imageUrl: s.imageUrl || null,
             })
           ),
         ])
@@ -284,7 +289,7 @@ export const PostForm = ({
         type="button"
         variant="ghost"
         onClick={() => append(newSection())}
-        className="mt-12 self-start text-md gap-2"
+        className="self-start text-md gap-2"
       >
         <PlusCircle size={18} />
         Add section

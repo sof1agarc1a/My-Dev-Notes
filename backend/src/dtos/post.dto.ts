@@ -10,6 +10,7 @@ export const CreatePostDto = z.object({
         content: z.string(),
         code: z.string().nullable().optional(),
         codeLanguage: z.string().max(50).nullable().optional(),
+        imageUrl: z.string().nullable().optional(),
       })
     )
     .optional(),

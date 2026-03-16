@@ -61,6 +61,7 @@ export async function createPost(req: Request, res: Response, next: NextFunction
                 content: s.content,
                 code: s.code ?? null,
                 codeLanguage: s.codeLanguage ?? null,
+                imageUrl: s.imageUrl ?? null,
                 order: (i + 1) * 1.0,
               })),
             }

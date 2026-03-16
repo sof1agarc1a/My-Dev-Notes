@@ -27,6 +27,7 @@ export async function createSection(req: Request, res: Response, next: NextFunct
         content: body.content,
         code: body.code ?? null,
         codeLanguage: body.codeLanguage ?? null,
+        imageUrl: body.imageUrl ?? null,
         order,
         postId,
       },
@@ -56,6 +57,7 @@ export async function updateSection(req: Request, res: Response, next: NextFunct
         ...(body.content !== undefined && { content: body.content }),
         ...(body.code !== undefined && { code: body.code }),
         ...(body.codeLanguage !== undefined && { codeLanguage: body.codeLanguage }),
+        ...(body.imageUrl !== undefined && { imageUrl: body.imageUrl }),
       },
     })
 

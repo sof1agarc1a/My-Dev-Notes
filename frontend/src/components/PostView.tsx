@@ -6,9 +6,9 @@ import { Button } from '@/components/ui/button'
 import { Heading } from '@/components/typography/Heading'
 import { Text } from '@/components/typography/Text'
 import { Pencil } from 'lucide-react'
-import { Separator } from '@/components/ui/separator'
 import { RichTextContent } from '@/components/RichTextContent'
 import { CodeBlock } from '@/components/CodeBlock'
+import Image from 'next/image'
 
 interface PostViewProps {
   post: Post
@@ -54,17 +54,30 @@ export const PostView = ({ post, topics, onEdit }: PostViewProps) => {
       </div>
 
       <div className="flex flex-col gap-12">
-        {post.sections.map((section, index) => (
+        {post.sections.map((section) => (
           <div key={section.id}>
-            {index > 0 && <Separator className="mb-12" />}
-            <Heading as="h2" size="md" className="text-foreground px-3 py-2 -mx-3 -mt-2 mb-4">
-              {section.headline}
-            </Heading>
+            {section.headline && (
+              <Heading as="h2" size="md" className="text-foreground px-3 py-2 -mx-3 -mt-2 mb-4">
+                {section.headline}
+              </Heading>
+            )}
             <RichTextContent
               content={section.content}
               className="text-base leading-6.5 text-foreground/75 px-3 py-2 -mx-3 -mt-2"
             />
             {section.code && <CodeBlock code={section.code} codeLanguage={section.codeLanguage} />}
+            {section.imageUrl && (
+              <div className="mt-6">
+                <Image
+                  src={section.imageUrl}
+                  alt="Section image"
+                  width={0}
+                  height={0}
+                  sizes="100vw"
+                  className="w-full h-auto rounded-lg border border-border"
+                />
+              </div>
+            )}
           </div>
         ))}
       </div>
