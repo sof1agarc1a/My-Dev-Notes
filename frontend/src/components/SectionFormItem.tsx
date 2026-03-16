@@ -13,6 +13,8 @@ import { GripVertical, Trash2, Code } from 'lucide-react'
 import { DraggableProvided } from '@hello-pangea/dnd'
 
 interface FormValues {
+  title: string
+  topicId: number | null
   sections: {
     sectionId: string
     headline: string

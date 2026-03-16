@@ -162,15 +162,13 @@ a {
   font-size: 1.2rem;
   font-weight: 500;
   line-height: 1.4;
-  margin-top: 1.25rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
 }
 .ProseMirror h3 {
   font-size: 1.1rem;
   font-weight: 500;
   line-height: 1.4;
-  margin-top: 1.25rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
 }
 .ProseMirror ul {
   list-style: disc;

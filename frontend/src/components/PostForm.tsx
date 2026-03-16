@@ -34,10 +34,22 @@ interface FormValues {
 }
 
 function newSection(): SectionDraft {
-  return { sectionId: crypto.randomUUID(), headline: '', content: '', code: '', codeLanguage: 'typescript' }
+  return {
+    sectionId: crypto.randomUUID(),
+    headline: '',
+    content: '',
+    code: '',
+    codeLanguage: 'typescript',
+  }
 }
 
-export const PostForm = ({ post, topics = [], initialTopicId = null, onSuccess, onCancel }: PostFormProps) => {
+export const PostForm = ({
+  post,
+  topics = [],
+  initialTopicId = null,
+  onSuccess,
+  onCancel,
+}: PostFormProps) => {
   const router = useRouter()
 
   const {
@@ -110,7 +122,9 @@ export const PostForm = ({ post, topics = [], initialTopicId = null, onSuccess, 
           ),
         ])
 
-        const createdIdMap = new Map(toCreate.map((draft, i) => [draft.sectionId, createdSections[i].id]))
+        const createdIdMap = new Map(
+          toCreate.map((draft, i) => [draft.sectionId, createdSections[i].id])
+        )
         const orderedIds = filledSections
           .map((section) =>
             existingIds.has(section.sectionId)
@@ -166,10 +180,13 @@ export const PostForm = ({ post, topics = [], initialTopicId = null, onSuccess, 
                       <Text
                         as="span"
                         size="sm"
-                        className={field.value !== null ? 'text-foreground' : 'text-muted-foreground'}
+                        className={
+                          field.value !== null ? 'text-foreground' : 'text-muted-foreground'
+                        }
                       >
                         {field.value !== null
-                          ? (topics.find((topic) => topic.id === field.value)?.name ?? 'Select topic')
+                          ? (topics.find((topic) => topic.id === field.value)?.name ??
+                            'Select topic')
                           : 'Select topic'}
                       </Text>
                     </SelectTrigger>
@@ -190,7 +207,7 @@ export const PostForm = ({ post, topics = [], initialTopicId = null, onSuccess, 
             type="text"
             placeholder="Page title..."
             {...register('title')}
-            className="border-none bg-transparent mt-4 px-0 py-0 text-6xl font-bold leading-tight tracking-tight text-foreground shadow-none placeholder:text-foreground/20 focus-visible:ring-0 h-auto"
+            className="border-none rounded-none bg-transparent mt-4 px-0 py-0 text-6xl font-bold leading-tight tracking-tight text-foreground shadow-none placeholder:text-foreground/20 focus-visible:ring-0 h-auto"
           />
         </div>
 
@@ -234,7 +251,11 @@ export const PostForm = ({ post, topics = [], initialTopicId = null, onSuccess, 
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="sections">
           {(provided) => (
-            <div {...provided.droppableProps} ref={provided.innerRef} className="flex flex-col gap-12">
+            <div
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              className="flex flex-col gap-12"
+            >
               {fields.map((field, index) => (
                 <Draggable key={field.id} draggableId={field.id} index={index}>
                   {(draggableProvided) => (
