@@ -11,7 +11,7 @@ export class AppError extends Error {
   }
 }
 
-export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
+export const errorHandler: ErrorRequestHandler = (err, _req, res) => {
   const isDev = process.env.NODE_ENV === 'development'
 
   if (err instanceof ZodError) {
