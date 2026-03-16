@@ -210,7 +210,7 @@ export const SidebarContent = ({ initialTopics, ungrouped }: SidebarContentProps
 
                       <Link
                         href={`/posts/new?topicId=${topic.id}`}
-                        className="opacity-0 group-hover/topic:opacity-100 transition-opacity flex items-center gap-1.5 pl-8 pr-2 py-1 text-[13px] text-sidebar-foreground/40 hover:text-sidebar-foreground"
+                        className="mt-1 opacity-0 group-hover/topic:opacity-100 transition-opacity flex items-center gap-1.5 pl-8 pr-2 py-1 text-[13px] text-sidebar-foreground/40 hover:text-sidebar-foreground"
                       >
                         <Plus size={14} />
                         New page

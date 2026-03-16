@@ -3,6 +3,7 @@ import { Nunito_Sans } from 'next/font/google'
 import './globals.css'
 import { Sidebar } from '@/components/Sidebar'
 import { PageTransition } from '@/components/PageTransition'
+import { ThemeProvider } from '@/components/ThemeProvider'
 
 const nunitoSans = Nunito_Sans({
   variable: '--font-sans',
@@ -20,14 +21,16 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={nunitoSans.variable}>
+    <html lang="en" className={nunitoSans.variable} suppressHydrationWarning>
       <body className="antialiased">
-        <div className="flex h-screen overflow-hidden">
-          <Sidebar />
-          <main className="flex-1 overflow-y-scroll">
-            <PageTransition>{children}</PageTransition>
-          </main>
-        </div>
+        <ThemeProvider>
+          <div className="flex h-screen overflow-hidden">
+            <Sidebar />
+            <main className="flex-1 overflow-y-scroll">
+              <PageTransition>{children}</PageTransition>
+            </main>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   )
