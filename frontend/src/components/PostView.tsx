@@ -10,6 +10,7 @@ import { Heading } from '@/components/typography/Heading'
 import { Text } from '@/components/typography/Text'
 import { Pencil, Code, Copy, Check } from 'lucide-react'
 import { Separator } from '@/components/ui/separator'
+import { RichTextContent } from '@/components/RichTextContent'
 
 const DOMPurify = typeof window !== 'undefined' ? createDOMPurify(window) : null
 
@@ -40,19 +41,18 @@ const CodeBlock = ({ code, codeLanguage }: { code: string; codeLanguage: string 
     <div className="relative mt-6 group/code">
       <div className="absolute top-2.5 right-3 flex items-center gap-2 z-10">
         <Code size={13} className="text-muted-foreground/50" />
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleCopy}
-          className="h-9 w-9 rounded-full"
-        >
+        <Button variant="ghost" size="icon" onClick={handleCopy} className="h-9 w-9 rounded-full">
           {copied ? <Check size={13} /> : <Copy size={13} />}
         </Button>
       </div>
       <pre className="rounded-lg overflow-x-auto text-sm leading-6 bg-[#f6f8fa]! border border-border">
         <code
           className={`language-${codeLanguage ?? 'plaintext'} hljs`}
-          dangerouslySetInnerHTML={{ __html: DOMPurify?.sanitize(highlightCode(code, codeLanguage)) ?? highlightCode(code, codeLanguage) }}
+          dangerouslySetInnerHTML={{
+            __html:
+              DOMPurify?.sanitize(highlightCode(code, codeLanguage)) ??
+              highlightCode(code, codeLanguage),
+          }}
         />
       </pre>
     </div>
@@ -66,9 +66,8 @@ export const PostView = ({ post, topics, onEdit }: PostViewProps) => {
     day: 'numeric',
   })
 
-  const topicName = post.topicId !== null
-    ? (topics.find((topic) => topic.id === post.topicId)?.name ?? null)
-    : null
+  const topicName =
+    post.topicId !== null ? (topics.find((topic) => topic.id === post.topicId)?.name ?? null) : null
 
   return (
     <div className="max-w-5xl mx-auto px-12 pt-16 pb-24">
@@ -76,9 +75,9 @@ export const PostView = ({ post, topics, onEdit }: PostViewProps) => {
         <div className="min-w-0">
           {topicName && (
             <div className="h-12 flex items-center">
-            <Text as="p" size="sm" className="text-muted-foreground">
-              {topicName}
-            </Text>
+              <Text as="p" size="sm" className="text-muted-foreground">
+                {topicName}
+              </Text>
             </div>
           )}
           <Heading as="h1" size="xl" className="text-foreground mt-4">
@@ -90,12 +89,7 @@ export const PostView = ({ post, topics, onEdit }: PostViewProps) => {
         </div>
 
         <div className="flex items-center gap-1.5 shrink-0 mt-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onEdit}
-            className="h-9 w-9 rounded-full"
-          >
+          <Button variant="ghost" size="icon" onClick={onEdit} className="h-9 w-9 rounded-full">
             <Pencil size={15} />
           </Button>
           <DeletePostButton postId={post.id} />
@@ -106,13 +100,14 @@ export const PostView = ({ post, topics, onEdit }: PostViewProps) => {
         {post.sections.map((section, index) => (
           <div key={section.id}>
             {index > 0 && <Separator className="mb-12" />}
-            <Heading as="h2" size="md" className="text-foreground px-3 py-2 -mx-3 -mt-2 mb-4">{section.headline}</Heading>
-            <Text as="p" size="md" className="text-foreground/75 leading-7 whitespace-pre-wrap px-3 py-2 -mx-3 -mt-2">
-              {section.content}
-            </Text>
-            {section.code && (
-              <CodeBlock code={section.code} codeLanguage={section.codeLanguage} />
-            )}
+            <Heading as="h2" size="md" className="text-foreground px-3 py-2 -mx-3 -mt-2 mb-4">
+              {section.headline}
+            </Heading>
+            <RichTextContent
+              content={section.content}
+              className="text-base leading-6.5 text-foreground/75 px-3 py-2 -mx-3 -mt-2"
+            />
+            {section.code && <CodeBlock code={section.code} codeLanguage={section.codeLanguage} />}
           </div>
         ))}
       </div>

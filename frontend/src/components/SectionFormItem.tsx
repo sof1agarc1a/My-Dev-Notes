@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select'
 import { Separator } from '@/components/ui/separator'
 import { Text } from '@/components/typography/Text'
+import { RichTextEditor } from '@/components/RichTextEditor'
 import { GripVertical, Trash2, Code } from 'lucide-react'
 import { DraggableProvided } from '@hello-pangea/dnd'
 
@@ -91,10 +92,10 @@ export const SectionFormItem = ({
           control={control}
           name={`sections.${index}.content`}
           render={({ field }) => (
-            <Textarea
-              placeholder="Write something..."
-              {...field}
-              className="text-base leading-7 text-foreground/75 bg-transparent border-none shadow-none ring-0 hover:ring-1 hover:ring-inset hover:ring-border focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring resize-none px-3 py-2 rounded-lg -ml-3 w-[calc(100%+1.5rem)] -mt-2 min-h-0"
+            <RichTextEditor
+              value={field.value}
+              onChange={field.onChange}
+              className="text-base leading-6.5 text-foreground/75 hover:ring-1 hover:ring-inset hover:ring-border focus-within:ring-1 focus-within:ring-inset focus-within:ring-ring px-3 py-2 rounded-lg -ml-3 w-[calc(100%+1.5rem)] -mt-2"
             />
           )}
         />

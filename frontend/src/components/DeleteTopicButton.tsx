@@ -25,11 +25,11 @@ export const DeleteTopicButton = ({ topicId }: { topicId: number }) => {
 
   return (
     <Button
-      variant="ghost"
+      variant="transparent"
       size="icon-sm"
       onClick={handleDelete}
       disabled={loading}
-      className="mb-1 ml-2 opacity-0 group-hover/topic:opacity-100 transition-opacity text-sidebar-foreground/40 hover:text-sidebar-foreground hover:bg-transparent"
+      className="mb-1 ml-2 opacity-0 group-hover/topic:opacity-100 transition-opacity"
     >
       <X size={14} />
     </Button>

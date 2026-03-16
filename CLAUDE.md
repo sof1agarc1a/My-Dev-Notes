@@ -43,6 +43,8 @@ Never use raw HTML elements when a component exists for it:
 - Dividers → `<Separator />` from `@/components/ui/separator`
 - Selects → `<Select>`, `<SelectTrigger>`, `<SelectValue>`, `<SelectContent>`, `<SelectItem>` from `@/components/ui/select`
 
+This rule applies **everywhere** — including small helper/utility components, toolbar buttons, icon wrappers, etc. Do not use raw `<button>`, `<p>`, `<h1>`–`<h6>`, `<input>`, `<textarea>`, or `<select>` anywhere in the codebase when the component library covers it.
+
 Exception: use a raw `<label>` when no component exists for it.
 
 ### Tailwind
