@@ -6,6 +6,7 @@ export interface Section {
   content: string
   code: string | null
   codeLanguage: string | null
+  imageUrl: string | null
   order: number
   postId: number
 }
@@ -77,6 +78,7 @@ export const api = {
         content: string
         code?: string | null
         codeLanguage?: string | null
+        imageUrl?: string | null
       }
     ) =>
       request<Section>(`/posts/${postId}/sections`, { method: 'POST', body: JSON.stringify(data) }),
@@ -88,6 +90,7 @@ export const api = {
         content?: string
         code?: string | null
         codeLanguage?: string | null
+        imageUrl?: string | null
       }
     ) =>
       request<Section>(`/posts/${postId}/sections/${id}`, {

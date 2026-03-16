@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Post, Topic, api } from '@/lib/api'
 import { PostView } from '@/components/PostView'
 import { PostForm } from '@/components/PostForm'
@@ -13,8 +13,19 @@ interface PostPageContentProps {
 
 export const PostPageContent = ({ post: initialPost, topics }: PostPageContentProps) => {
   const router = useRouter()
-  const [isEditing, setIsEditing] = useState(false)
+  const searchParams = useSearchParams()
+  const [isEditing, setIsEditing] = useState(() => searchParams.get('edit') === 'true')
   const [currentPost, setCurrentPost] = useState(initialPost)
+
+  const enterEdit = () => {
+    setIsEditing(true)
+    router.replace(`?edit=true`)
+  }
+
+  const exitEdit = () => {
+    setIsEditing(false)
+    router.replace(`?`)
+  }
 
   const handleEditSuccess = async () => {
     try {
@@ -23,7 +34,7 @@ export const PostPageContent = ({ post: initialPost, topics }: PostPageContentPr
     } catch {
       // fall through with existing data
     }
-    setIsEditing(false)
+    exitEdit()
     router.refresh()
   }
 
@@ -33,10 +44,10 @@ export const PostPageContent = ({ post: initialPost, topics }: PostPageContentPr
         post={currentPost}
         topics={topics}
         onSuccess={handleEditSuccess}
-        onCancel={() => setIsEditing(false)}
+        onCancel={exitEdit}
       />
     </div>
   ) : (
-    <PostView post={currentPost} topics={topics} onEdit={() => setIsEditing(true)} />
+    <PostView post={currentPost} topics={topics} onEdit={enterEdit} />
   )
 }
