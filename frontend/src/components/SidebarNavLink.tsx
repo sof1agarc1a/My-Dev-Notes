@@ -20,9 +20,7 @@ export const SidebarNavLink = ({ href, children, className }: SidebarNavLinkProp
       className={cn(
         'flex items-center gap-2.5 px-2 py-1.5 mr-5 rounded-lg text-[15px] transition-colors w-full',
         className,
-        isActive
-          ? 'bg-brand text-brand-foreground'
-          : 'text-sidebar-foreground hover:bg-brand/60'
+        isActive ? 'bg-brand text-brand-foreground' : 'text-sidebar-foreground hover:bg-brand/60'
       )}
     >
       {children}

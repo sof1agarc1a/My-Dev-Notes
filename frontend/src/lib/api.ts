@@ -79,7 +79,12 @@ export const api = {
   blocks: {
     create: (
       postId: number,
-      data: { type: BlockType; content?: string; codeLanguage?: string | null; imageUrl?: string | null }
+      data: {
+        type: BlockType
+        content?: string
+        codeLanguage?: string | null
+        imageUrl?: string | null
+      }
     ) => request<Block>(`/posts/${postId}/blocks`, { method: 'POST', body: JSON.stringify(data) }),
     update: (
       postId: number,

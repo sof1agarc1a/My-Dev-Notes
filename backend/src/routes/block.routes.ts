@@ -1,7 +1,12 @@
 import { Router } from 'express'
 import { validate } from '../middleware/validate'
 import { CreateBlockDto, UpdateBlockDto, ReorderBlocksDto } from '../dtos/block.dto'
-import { createBlock, updateBlock, deleteBlock, reorderBlocks } from '../controllers/block.controller'
+import {
+  createBlock,
+  updateBlock,
+  deleteBlock,
+  reorderBlocks,
+} from '../controllers/block.controller'
 
 const router = Router({ mergeParams: true })
 
