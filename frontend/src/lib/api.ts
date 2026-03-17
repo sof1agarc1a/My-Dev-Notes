@@ -19,7 +19,6 @@ export interface Post {
   blocks: Block[]
   createdAt: string
   updatedAt: string
-  _count?: { blocks: number }
 }
 
 export interface Topic {
