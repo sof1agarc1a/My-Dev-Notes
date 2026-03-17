@@ -1,20 +1,52 @@
 # Notes App
 
-A full-stack notes application for documenting things I learn in development. For me myself and I.
+A full-stack notes application for documenting things I learn as a dev. For me myself and I.
 
 ## Stack
 
-| Layer | Tech |
-|---|---|
-| Frontend | Next.js 14 (App Router), TypeScript, Tailwind CSS, Shadcn UI |
-| Backend | Express 5, TypeScript, Zod (validation + DTOs) |
-| ORM | Prisma 7 |
-| Database | PostgreSQL 16 |
-| DnD | @hello-pangea/dnd 
+| Layer    | Tech                                                           |
+| -------- | -------------------------------------------------------------- |
+| Frontend | Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS v4 |
+| Backend  | Express 5, TypeScript, Zod (validation + DTOs)                 |
+| ORM      | Prisma 7                                                       |
+| Database | PostgreSQL 16                                                  |
+
+**Frontend packages**
+
+| Packages                                  | Purpose                                   |
+| ----------------------------------------- | ----------------------------------------- |
+| `@base-ui/react`, shadcn                  | UI primitives                             |
+| Tiptap                                    | Rich text editor                          |
+| Lucide React                              | Icons                                     |
+| `@hello-pangea/dnd`                       | Drag & drop                               |
+| React Hook Form                           | Forms                                     |
+| next-themes                               | Dark mode                                 |
+| UploadThing + `browser-image-compression` | Image upload with client-side compression |
+| highlight.js                              | Syntax highlighting in code blocks        |
+| DOMPurify                                 | HTML sanitization                         |
+
+**Dev tooling**
+
+ESLint · Prettier · Lefthook (pre-commit hooks)
+
+**AI**
+
+Vibe-coded with Claude Code. Let's see how much spaghetti code I have to clean up. =)
+
+## Music
+
+Listened to while coding this.
+
+- [Office Odyssey | Source Radio 📡](https://youtu.be/Ol_NpJQA9VU?si=zVZimOZAII3RCs2P&t=355)
+
+- [The Mountain, The Moon Cave and The Sad God](https://youtu.be/ucRulNQsuYQ?si=KxH9YiuoniPI0Z1l)
+
+- [One Ocean Way](https://www.youtube.com/watch?v=jP1_lp_0EEM&list=PLoVkfjDJTISiUAoyI7olMn2wPp4bKsKIU&index=98)
 
 ## Setup
 
 ### Prerequisites
+
 - Node.js 20+
 - Docker
 
@@ -48,6 +80,7 @@ npm run dev          # starts on http://localhost:3000
 ## Scripts
 
 **Backend**
+
 ```bash
 npm run dev           # development server with hot reload
 npm run build         # compile TypeScript
@@ -58,6 +91,7 @@ npm run db:studio     # open Prisma Studio
 ```
 
 **Frontend**
+
 ```bash
 npm run dev           # development server
 npm run build         # production build
