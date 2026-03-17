@@ -40,7 +40,7 @@ interface ToolbarButtonProps {
 const ToolbarButton = ({ onClick, active, title, children }: ToolbarButtonProps) => (
   <Button
     type="button"
-    variant="ghost"
+    variant="secondary"
     size="icon"
     onClick={onClick}
     title={title}

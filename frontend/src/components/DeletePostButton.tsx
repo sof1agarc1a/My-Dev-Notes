@@ -32,7 +32,7 @@ export const DeletePostButton = ({ postId }: { postId: number }) => {
         onClick={() => setOpen(true)}
         className="h-9 w-9 rounded-full"
       >
-        <Trash2 size={15} /
+        <Trash2 size={15} />
       </Button>
       <ConfirmDialog
         open={open}
@@ -45,4 +45,3 @@ export const DeletePostButton = ({ postId }: { postId: number }) => {
     </>
   )
 }
-const x = 1
