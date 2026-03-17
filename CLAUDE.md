@@ -7,6 +7,7 @@
 - **Semicolons**: none (the project uses no-semicolon style)
 - **Braces**: always use curly braces for `if` statements — never inline, even for a single return or empty body
 - **Naming**: Don't name any variables with only one letter, like sections to s. Use section as naming instead, whole words to make it readable. Exception: use `e` for event parameters (e.g. `(e: React.ChangeEvent<...>) => ...`).
+- **Destructuring**: Always destructure object properties instead of using dot notation repeatedly. Applies to function parameters, callback parameters, and variables accessed 2+ times. Single one-off accesses are fine inline.
 - **Functions**: Extract inline JSX functions to named `const` declarations above the return statement **only when they contain logic** (if statements, conditions, multiple statements). Simple one-liner setters like `onChange={(e) => setName(e.target.value)}` are fine to keep inline.
 - **JSX expressions**: Keep simple data display inline — fallbacks like `{text || 'default'}` or `{value ?? 'placeholder'}` are fine in JSX. Extract to a named `const` only when the expression involves real logic (function calls, chained lookups, ternaries with computation). `className` strings (including conditional Tailwind via template literals or `cn()`) always stay inline.
 

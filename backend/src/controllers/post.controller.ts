@@ -48,19 +48,19 @@ export async function getPostById(req: Request, res: Response, next: NextFunctio
 
 export async function createPost(req: Request, res: Response, next: NextFunction) {
   try {
-    const body = req.body as CreatePostInput
+    const { title, topicId, blocks } = req.body as CreatePostInput
 
     const post = await prisma.post.create({
       data: {
-        title: body.title,
-        topicId: body.topicId ?? null,
-        blocks: body.blocks
+        title,
+        topicId: topicId ?? null,
+        blocks: blocks
           ? {
-              create: body.blocks.map((b, i) => ({
-                type: b.type,
-                content: b.content ?? '',
-                codeLanguage: b.codeLanguage ?? null,
-                imageUrl: b.imageUrl ?? null,
+              create: blocks.map(({ type, content, codeLanguage, imageUrl }, i) => ({
+                type,
+                content: content ?? '',
+                codeLanguage: codeLanguage ?? null,
+                imageUrl: imageUrl ?? null,
                 order: (i + 1) * 1.0,
               })),
             }
@@ -78,7 +78,7 @@ export async function createPost(req: Request, res: Response, next: NextFunction
 export async function updatePost(req: Request, res: Response, next: NextFunction) {
   try {
     const id = Number(req.params.id)
-    const body = req.body as UpdatePostInput
+    const { title, topicId } = req.body as UpdatePostInput
 
     const existing = await prisma.post.findUnique({ where: { id } })
     if (!existing) {
@@ -88,8 +88,8 @@ export async function updatePost(req: Request, res: Response, next: NextFunction
     const post = await prisma.post.update({
       where: { id },
       data: {
-        title: body.title,
-        ...(body.topicId !== undefined && { topicId: body.topicId }),
+        title,
+        ...(topicId !== undefined && { topicId }),
       },
       include: { blocks: { orderBy: { order: 'asc' } } },
     })

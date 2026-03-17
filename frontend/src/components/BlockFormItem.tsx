@@ -143,10 +143,10 @@ export const BlockFormItem = ({ control, index, provided, onRemove }: BlockFormI
           <Controller
             control={control}
             name={`blocks.${index}.content`}
-            render={({ field }) => (
+            render={({ field: { value, onChange } }) => (
               <RichTextEditor
-                value={field.value}
-                onChange={field.onChange}
+                value={value}
+                onChange={onChange}
                 onEditorReady={setRichEditor}
                 className="min-h-36 text-base leading-6.5 text-foreground/75 hover:ring-1 hover:ring-inset hover:ring-border focus-within:ring-1 focus-within:ring-inset focus-within:ring-ring px-3 py-2 rounded-lg -ml-3 w-[calc(100%+1.5rem)]"
               />
@@ -167,18 +167,17 @@ export const BlockFormItem = ({ control, index, provided, onRemove }: BlockFormI
             <Controller
               control={control}
               name={`blocks.${index}.codeLanguage`}
-              render={({ field }) => (
-                <Select value={field.value || 'typescript'} onValueChange={field.onChange}>
+              render={({ field: { value, onChange } }) => (
+                <Select value={value || 'typescript'} onValueChange={onChange}>
                   <SelectTrigger className="h-auto border-none shadow-none px-0 py-0 gap-1 focus:ring-0 w-auto">
                     <Text as="span" size="xs">
-                      {codeLanguages.find((lang) => lang.value === field.value)?.label ??
-                        'TypeScript'}
+                      {codeLanguages.find((lang) => lang.value === value)?.label ?? 'TypeScript'}
                     </Text>
                   </SelectTrigger>
                   <SelectContent>
-                    {codeLanguages.map((lang) => (
-                      <SelectItem key={lang.value} value={lang.value}>
-                        {lang.label}
+                    {codeLanguages.map(({ value: langValue, label }) => (
+                      <SelectItem key={langValue} value={langValue}>
+                        {label}
                       </SelectItem>
                     ))}
                   </SelectContent>

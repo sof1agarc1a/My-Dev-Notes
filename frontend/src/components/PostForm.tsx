@@ -150,91 +150,94 @@ export const PostForm = ({
     if (!result.destination) {
       return
     }
-    move(result.source.index, result.destination.index)
+    const { source, destination } = result
+    move(source.index, destination.index)
   }
 
-  const isBlockEmpty = (block: BlockDraft) => {
-    if (block.type === 'divider') {
+  const isBlockEmpty = ({ type, imageUrl, content }: BlockDraft) => {
+    if (type === 'divider') {
       return false
     }
-    if (block.type === 'image') {
-      return !block.imageUrl
+    if (type === 'image') {
+      return !imageUrl
     }
-    return !block.content
+    return !content
   }
 
   const onSubmit = async (values: FormValues) => {
     try {
+      const { title, topicId, blocks: draftBlocks } = values
       if (post) {
-        await api.posts.update(post.id, { title: values.title, topicId: values.topicId })
+        const { id: postId, blocks: postBlocks } = post
+        await api.posts.update(postId, { title, topicId })
 
-        const existingIds = new Set(post.blocks.map((block) => String(block.id)))
-        const toCreate = values.blocks.filter(
+        const existingIds = new Set(postBlocks.map(({ id }) => String(id)))
+        const toCreate = draftBlocks.filter(
           (block) => !existingIds.has(block.blockId) && !isBlockEmpty(block)
         )
-        const toUpdate = values.blocks.filter(
+        const toUpdate = draftBlocks.filter(
           (block) => existingIds.has(block.blockId) && !isBlockEmpty(block)
         )
-        const toDelete = post.blocks.filter(
-          (block) =>
-            !values.blocks.find((draft) => draft.blockId === String(block.id)) ||
-            values.blocks.some((draft) => draft.blockId === String(block.id) && isBlockEmpty(draft))
+        const toDelete = postBlocks.filter(
+          ({ id }) =>
+            !draftBlocks.find((draft) => draft.blockId === String(id)) ||
+            draftBlocks.some((draft) => draft.blockId === String(id) && isBlockEmpty(draft))
         )
 
         const createdBlocks = await Promise.all(
-          toCreate.map((block) =>
-            api.blocks.create(post.id, {
-              type: block.type,
-              content: block.content,
-              codeLanguage: block.codeLanguage || null,
-              imageUrl: block.imageUrl || null,
+          toCreate.map(({ type, content, codeLanguage, imageUrl }) =>
+            api.blocks.create(postId, {
+              type,
+              content,
+              codeLanguage: codeLanguage || null,
+              imageUrl: imageUrl || null,
             })
           )
         )
 
         await Promise.all([
-          ...toDelete.map((block) => api.blocks.delete(post.id, block.id)),
-          ...toUpdate.map((block) =>
-            api.blocks.update(post.id, Number(block.blockId), {
-              content: block.content,
-              codeLanguage: block.codeLanguage || null,
-              imageUrl: block.imageUrl || null,
+          ...toDelete.map(({ id }) => api.blocks.delete(postId, id)),
+          ...toUpdate.map(({ blockId, content, codeLanguage, imageUrl }) =>
+            api.blocks.update(postId, Number(blockId), {
+              content,
+              codeLanguage: codeLanguage || null,
+              imageUrl: imageUrl || null,
             })
           ),
         ])
 
-        const deletedIds = new Set(toDelete.map((block) => String(block.id)))
+        const deletedIds = new Set(toDelete.map(({ id }) => String(id)))
         const createdIdMap = new Map(
-          toCreate.map((draft, i) => [draft.blockId, createdBlocks[i].id])
+          toCreate.map(({ blockId }, i) => [blockId, createdBlocks[i].id])
         )
-        const orderedIds = values.blocks
+        const orderedIds = draftBlocks
           .filter((block) => !isBlockEmpty(block))
-          .map((block) =>
-            existingIds.has(block.blockId) && !deletedIds.has(block.blockId)
-              ? Number(block.blockId)
-              : (createdIdMap.get(block.blockId) ?? null)
+          .map(({ blockId }) =>
+            existingIds.has(blockId) && !deletedIds.has(blockId)
+              ? Number(blockId)
+              : (createdIdMap.get(blockId) ?? null)
           )
           .filter((id): id is number => id !== null)
 
-        await api.blocks.reorder(post.id, orderedIds)
+        await api.blocks.reorder(postId, orderedIds)
 
         if (onSuccess) {
           await onSuccess()
         } else {
-          router.push(`/posts/${post.id}`)
+          router.push(`/posts/${postId}`)
           router.refresh()
         }
       } else {
         const created = await api.posts.create({
-          title: values.title,
-          topicId: values.topicId,
-          blocks: values.blocks
+          title,
+          topicId,
+          blocks: draftBlocks
             .filter((block) => !isBlockEmpty(block))
-            .map((block) => ({
-              type: block.type,
-              content: block.content,
-              codeLanguage: block.codeLanguage || null,
-              imageUrl: block.imageUrl || null,
+            .map(({ type, content, codeLanguage, imageUrl }) => ({
+              type,
+              content,
+              codeLanguage: codeLanguage || null,
+              imageUrl: imageUrl || null,
             })),
         })
         router.push(`/posts/${created.id}`)
@@ -258,27 +261,22 @@ export const PostForm = ({
                 <Controller
                   control={control}
                   name="topicId"
-                  render={({ field }) => (
+                  render={({ field: { value, onChange } }) => (
                     <Select
-                      value={field.value !== null ? String(field.value) : ''}
-                      onValueChange={(val) => field.onChange(val ? Number(val) : null)}
+                      value={value !== null ? String(value) : ''}
+                      onValueChange={(val) => onChange(val ? Number(val) : null)}
                     >
                       <SelectTrigger className="h-auto border-none shadow-none px-0 py-0 gap-1 focus:ring-0 w-auto text-sm text-muted-foreground hover:text-foreground transition-colors">
-                        <Text
-                          as="span"
-                          size="sm"
-                          color={field.value !== null ? 'foreground' : 'muted'}
-                        >
-                          {field.value !== null
-                            ? (topics.find((topic) => topic.id === field.value)?.name ??
-                              'Select topic')
+                        <Text as="span" size="sm" color={value !== null ? 'foreground' : 'muted'}>
+                          {value !== null
+                            ? (topics.find((topic) => topic.id === value)?.name ?? 'Select topic')
                             : 'Select topic'}
                         </Text>
                       </SelectTrigger>
                       <SelectContent>
-                        {topics.map((topic) => (
-                          <SelectItem key={topic.id} value={String(topic.id)}>
-                            {topic.name}
+                        {topics.map(({ id, name }) => (
+                          <SelectItem key={id} value={String(id)}>
+                            {name}
                           </SelectItem>
                         ))}
                       </SelectContent>

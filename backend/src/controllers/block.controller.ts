@@ -6,7 +6,7 @@ import { CreateBlockInput, UpdateBlockInput, ReorderBlocksInput } from '../dtos/
 export async function createBlock(req: Request, res: Response, next: NextFunction) {
   try {
     const postId = Number(req.params.postId)
-    const body = req.body as CreateBlockInput
+    const { type, content, codeLanguage, imageUrl } = req.body as CreateBlockInput
 
     const post = await prisma.post.findUnique({ where: { id: postId } })
     if (!post) {
@@ -23,10 +23,10 @@ export async function createBlock(req: Request, res: Response, next: NextFunctio
     const block = await prisma.block.create({
       data: {
         postId,
-        type: body.type,
-        content: body.content ?? '',
-        codeLanguage: body.codeLanguage ?? null,
-        imageUrl: body.imageUrl ?? null,
+        type,
+        content: content ?? '',
+        codeLanguage: codeLanguage ?? null,
+        imageUrl: imageUrl ?? null,
         order,
       },
     })
@@ -41,7 +41,7 @@ export async function updateBlock(req: Request, res: Response, next: NextFunctio
   try {
     const postId = Number(req.params.postId)
     const id = Number(req.params.id)
-    const body = req.body as UpdateBlockInput
+    const { content, codeLanguage, imageUrl } = req.body as UpdateBlockInput
 
     const existing = await prisma.block.findFirst({ where: { id, postId } })
     if (!existing) {
@@ -51,9 +51,9 @@ export async function updateBlock(req: Request, res: Response, next: NextFunctio
     const block = await prisma.block.update({
       where: { id },
       data: {
-        ...(body.content !== undefined && { content: body.content }),
-        ...(body.codeLanguage !== undefined && { codeLanguage: body.codeLanguage }),
-        ...(body.imageUrl !== undefined && { imageUrl: body.imageUrl }),
+        ...(content !== undefined && { content }),
+        ...(codeLanguage !== undefined && { codeLanguage }),
+        ...(imageUrl !== undefined && { imageUrl }),
       },
     })
 

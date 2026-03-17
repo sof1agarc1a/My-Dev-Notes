@@ -18,14 +18,16 @@ interface PostViewProps {
 }
 
 export const PostView = ({ post, topics, onEdit }: PostViewProps) => {
-  const updatedAt = new Date(post.updatedAt).toLocaleDateString('en-US', {
+  const { updatedAt, topicId, title, id, blocks } = post
+
+  const formattedUpdatedAt = new Date(updatedAt).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   })
 
   const topicName =
-    post.topicId !== null ? (topics.find((topic) => topic.id === post.topicId)?.name ?? null) : null
+    topicId !== null ? (topics.find((topic) => topic.id === topicId)?.name ?? null) : null
 
   return (
     <div className="max-w-5xl mx-auto px-12 pt-16 pb-24">
@@ -39,10 +41,10 @@ export const PostView = ({ post, topics, onEdit }: PostViewProps) => {
             </div>
           )}
           <Heading as="h1" size="xl" className="mt-4">
-            {post.title}
+            {title}
           </Heading>
           <Text as="p" size="sm" color="muted" className="mt-3">
-            Last updated · {updatedAt}
+            Last updated · {formattedUpdatedAt}
           </Text>
         </div>
 
@@ -51,38 +53,37 @@ export const PostView = ({ post, topics, onEdit }: PostViewProps) => {
             <Pencil className="dark:text-brand" />
           </Button>
 
-          <DeletePostButton postId={post.id} />
+          <DeletePostButton postId={id} />
         </div>
       </div>
 
       <div className="flex flex-col gap-10">
-        {post.blocks.map((block) => {
-          if (block.type === 'heading' && block.content) {
+        {blocks.map((block) => {
+          const { type, content, id: blockId, imageUrl, codeLanguage } = block
+          if (type === 'heading' && content) {
             return (
-              <Heading key={block.id} as="h2" size="md">
-                {block.content}
+              <Heading key={blockId} as="h2" size="md">
+                {content}
               </Heading>
             )
           }
-          if (block.type === 'text' && block.content) {
+          if (type === 'text' && content) {
             return (
               <RichTextContent
-                key={block.id}
-                content={block.content}
+                key={blockId}
+                content={content}
                 className="text-base leading-6.5 text-foreground/75"
               />
             )
           }
-          if (block.type === 'code' && block.content) {
-            return (
-              <CodeBlock key={block.id} code={block.content} codeLanguage={block.codeLanguage} />
-            )
+          if (type === 'code' && content) {
+            return <CodeBlock key={blockId} code={content} codeLanguage={codeLanguage} />
           }
-          if (block.type === 'image' && block.imageUrl) {
+          if (type === 'image' && imageUrl) {
             return (
               <Image
-                key={block.id}
-                src={block.imageUrl}
+                key={blockId}
+                src={imageUrl}
                 alt="Block image"
                 width={0}
                 height={0}
@@ -91,8 +92,8 @@ export const PostView = ({ post, topics, onEdit }: PostViewProps) => {
               />
             )
           }
-          if (block.type === 'divider') {
-            return <Separator key={block.id} />
+          if (type === 'divider') {
+            return <Separator key={blockId} />
           }
           return null
         })}
