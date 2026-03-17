@@ -50,6 +50,7 @@ const ToolbarButton = ({ onClick, active, title, children }: ToolbarButtonProps)
     )}
   >
     {children}
+    Test save without formatting
   </Button>
 )
 
