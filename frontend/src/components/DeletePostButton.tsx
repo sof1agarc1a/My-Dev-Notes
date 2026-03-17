@@ -46,4 +46,3 @@ export const DeletePostButton = ({ postId }: { postId: number }) => {
   )
 }
 const x = 1
-const x = 1
