@@ -9,7 +9,9 @@
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "format": "prettier --write src",
-    "format:check": "prettier --check src"
+    "format:check": "prettier --check src",
+    "typecheck": "tsc --noEmit",
+    "prepare": "cd .. && npx lefthook install"
   },
   "dependencies": {
     "@base-ui/react": "^1.2.0",
@@ -44,6 +46,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "eslint-config-prettier": "^10.1.8",
+    "lefthook": "^1.13.6",
     "prettier": "^3.8.1",
     "tailwindcss": "^4",
     "typescript": "^5"

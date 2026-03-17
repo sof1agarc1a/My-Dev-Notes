@@ -1,0 +1,32 @@
+pre-commit:
+  parallel: true
+  commands:
+    frontend-lint:
+      root: "frontend/"
+      glob: "src/**/*.{ts,tsx}"
+      run: npx eslint --max-warnings=0 {staged_files}
+
+    frontend-typecheck:
+      root: "frontend/"
+      glob: "src/**/*.{ts,tsx}"
+      run: npm run typecheck
+
+    frontend-format:
+      root: "frontend/"
+      glob: "src/**/*.{ts,tsx,css,json}"
+      run: npx prettier --check {staged_files}
+
+    backend-lint:
+      root: "backend/"
+      glob: "src/**/*.ts"
+      run: npx eslint {staged_files}
+
+    backend-typecheck:
+      root: "backend/"
+      glob: "src/**/*.ts"
+      run: npm run typecheck
+
+    backend-format:
+      root: "backend/"
+      glob: "src/**/*.{ts,json}"
+      run: npx prettier --check {staged_files}
