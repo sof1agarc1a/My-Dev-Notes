@@ -304,7 +304,7 @@ export const PostForm = ({
           <div className="flex items-center gap-1.5 shrink-0 mt-1">
             <Button
               type="button"
-              variant="ghost"
+              variant="outline"
               size="sm"
               onClick={handleCancel}
               className="text-foreground bg-muted hover:bg-muted/70"

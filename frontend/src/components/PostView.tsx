@@ -47,8 +47,8 @@ export const PostView = ({ post, topics, onEdit }: PostViewProps) => {
         </div>
 
         <div className="flex items-center gap-1.5 shrink-0 mt-1">
-          <Button variant="ghost" size="icon" onClick={onEdit} className="h-9 w-9 rounded-full">
-            <Pencil size={15} />
+          <Button variant="secondary" size="icon" onClick={onEdit} className="h-9 w-9 rounded-full">
+            <Pencil size={15} className="dark:text-brand" />
           </Button>
           <DeletePostButton postId={post.id} />
         </div>

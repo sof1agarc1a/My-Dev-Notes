@@ -10,7 +10,7 @@ export const DarkModeToggle = () => {
   return (
     <Button
       type="button"
-      variant="ghost"
+      variant="secondary"
       size="icon"
       onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
       className="group h-8 w-8 rounded-full text-sidebar-foreground/50 hover:text-sidebar-foreground"
@@ -21,7 +21,7 @@ export const DarkModeToggle = () => {
       />
       <Moon
         size={15}
-        className="hidden dark:block transition-transform duration-300 group-hover:-rotate-90"
+        className="hidden dark:block text-moon transition-transform duration-300 group-hover:-rotate-100"
       />
     </Button>
   )

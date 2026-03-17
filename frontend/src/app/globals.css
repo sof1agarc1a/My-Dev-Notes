@@ -6,7 +6,6 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --color-code-background: var(--code-background);
   --color-brand: var(--brand);
   --color-brand-hover: var(--brand-hover);
   --color-brand-foreground: var(--brand-foreground);
@@ -22,11 +21,6 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -36,10 +30,6 @@
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
   --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
@@ -51,6 +41,8 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  --color-code-background: var(--code-background);
+  --color-moon: var(--moon);
 }
 
 :root {
@@ -59,14 +51,8 @@
   --brand-foreground: rgb(10, 10, 10);
   --background: rgb(255, 255, 255);
   --foreground: rgb(10, 10, 10);
-  --card: rgb(255, 255, 255);
-  --card-foreground: rgb(10, 10, 10);
   --popover: rgb(255, 255, 255);
   --popover-foreground: rgb(10, 10, 10);
-  --primary: rgb(23, 23, 23);
-  --primary-foreground: rgb(250, 250, 250);
-  --secondary: rgb(245, 245, 245);
-  --secondary-foreground: rgb(23, 23, 23);
   --muted: rgb(245, 245, 245);
   --muted-foreground: rgb(115, 115, 115);
   --accent: rgb(245, 245, 245);
@@ -76,59 +62,34 @@
   --border: rgb(229, 229, 229);
   --input: rgb(229, 229, 229);
   --ring: rgb(161, 161, 161);
-  --chart-1: rgb(142, 197, 255);
-  --chart-2: rgb(43, 127, 255);
-  --chart-3: rgb(21, 93, 252);
-  --chart-4: rgb(20, 71, 230);
-  --chart-5: rgb(25, 60, 184);
   --radius: 0.625rem;
   --sidebar: rgb(255, 246, 237);
   --sidebar-foreground: rgb(11, 11, 11);
-  --sidebar-primary: rgb(23, 23, 23);
-  --sidebar-primary-foreground: rgb(250, 250, 250);
-  --sidebar-accent: rgb(244, 200, 166);
-  --sidebar-accent-foreground: rgb(6, 6, 6);
   --sidebar-border: rgb(236, 195, 168);
-  --sidebar-ring: rgb(161, 161, 161);
   --code-background: rgb(246, 248, 250);
 }
 
 .dark {
-  --brand: rgb(218, 133, 75);
-  --brand-hover: rgb(198, 115, 60);
+  --brand: rgb(238, 131, 74);
+  --brand-hover: rgb(221, 126, 63);
   --brand-foreground: rgb(10, 10, 10);
   --background: rgb(10, 10, 10);
   --foreground: rgb(250, 250, 250);
-  --card: rgb(23, 23, 23);
-  --card-foreground: rgb(250, 250, 250);
   --popover: rgb(23, 23, 23);
   --popover-foreground: rgb(250, 250, 250);
-  --primary: rgb(229, 229, 229);
-  --primary-foreground: rgb(23, 23, 23);
-  --secondary: rgb(38, 38, 38);
-  --secondary-foreground: rgb(250, 250, 250);
   --muted: rgb(38, 38, 38);
   --muted-foreground: rgb(161, 161, 161);
   --accent: rgb(38, 38, 38);
   --accent-foreground: rgb(250, 250, 250);
   --destructive: rgb(198, 11, 11);
-  --destructive-foreground: rgb(255, 241, 241);
+  --destructive-foreground: rgb(42, 16, 16);
   --border: rgb(29, 29, 29);
   --input: rgb(39, 39, 39);
   --ring: rgb(115, 115, 115);
-  --chart-1: rgb(142, 197, 255);
-  --chart-2: rgb(43, 127, 255);
-  --chart-3: rgb(21, 93, 252);
-  --chart-4: rgb(20, 71, 230);
-  --chart-5: rgb(25, 60, 184);
   --sidebar: rgb(18, 18, 18);
   --sidebar-foreground: rgb(206, 206, 206);
-  --sidebar-primary: rgb(20, 71, 230);
-  --sidebar-primary-foreground: rgb(250, 250, 250);
-  --sidebar-accent: rgb(38, 38, 38);
-  --sidebar-accent-foreground: rgb(250, 250, 250);
   --sidebar-border: rgb(36, 36, 36);
-  --sidebar-ring: rgb(115, 115, 115);
+  --moon: rgb(199, 225, 255);
   --code-background: rgb(27, 27, 27);
 }
 

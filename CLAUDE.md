@@ -21,22 +21,26 @@ const selectedGroupName = groupId !== null ? groups.find((g) => g.id === groupId
 
 ```ts
 // Bad
-if (!post) return
-if (!post) { return }
+if (!post) return;
+if (!post) {
+  return;
+}
 
 // Good
 if (!post) {
-  return
+  return;
 }
 ```
 
 ## Frontend — Component Rules
 
 ### Always use the component library
+
 Never use raw HTML elements when a component exists for it:
+
 - Text → `<Text as="p|span" size="xs|sm|md|lg" />` from `@/components/typography/Text`
 - Headings → `<Heading as="h1-h6" size="xs|sm|md|lg|xl" />` from `@/components/typography/Heading`
-- Buttons → `<Button variant="default|outline|secondary|ghost|destructive|link" size="xs|sm|default|lg|icon|..." />` from `@/components/ui/button`
+- Buttons → `<Button variant="primary|outline|secondary|ghost|destructive|link" size="xs|sm|default|lg|icon|..." />` from `@/components/ui/button`
 - Inputs → `<Input />` from `@/components/ui/input`
 - Textareas → `<Textarea />` from `@/components/ui/textarea`
 - Cards → `<Card>`, `<CardHeader>`, `<CardContent>` from `@/components/ui/card`
@@ -48,12 +52,14 @@ This rule applies **everywhere** — including small helper/utility components, 
 Exception: use a raw `<label>` when no component exists for it.
 
 ### Tailwind
+
 - Use Tailwind utility classes only — no inline styles
 - Use `cn()` from `@/lib/utils` for conditional classes
 - Prefer existing CSS variables (`text-sidebar-foreground`, `bg-sidebar`, etc.) over hardcoded colors
 - Use rgb or hex values only when matching the existing design colors
 
 ### Next.js (App Router)
+
 - Page components are `async` server components by default
 - `params` must be typed as `Promise<{ ... }>` and awaited (Next.js 15)
 - Use `force-dynamic` export when the page fetches data that should not be cached
@@ -68,12 +74,12 @@ Exception: use a raw `<label>` when no component exists for it.
 
 ## Stack Reference
 
-| Layer | Tech |
-|---|---|
-| Frontend | Next.js 15, React, TypeScript, Tailwind CSS v4 |
-| UI primitives | Base UI (`@base-ui/react`) |
-| Backend | Express, TypeScript |
-| ORM | Prisma + PostgreSQL |
-| Validation | Zod |
-| Icons | Lucide React |
-| Drag & drop | @hello-pangea/dnd |
+| Layer         | Tech                                           |
+| ------------- | ---------------------------------------------- |
+| Frontend      | Next.js 15, React, TypeScript, Tailwind CSS v4 |
+| UI primitives | Base UI (`@base-ui/react`)                     |
+| Backend       | Express, TypeScript                            |
+| ORM           | Prisma + PostgreSQL                            |
+| Validation    | Zod                                            |
+| Icons         | Lucide React                                   |
+| Drag & drop   | @hello-pangea/dnd                              |
