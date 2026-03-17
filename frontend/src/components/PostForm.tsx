@@ -10,7 +10,8 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select'
 import { Text } from '@/components/typography/Text'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
-import { BlockFormItem, BlockDraft } from '@/components/BlockFormItem'
+import { BlockFormItem } from '@/components/BlockFormItem'
+import { BlockDraft } from '@/lib/utils'
 import {
   FilePlus,
   Heading,
@@ -70,12 +71,12 @@ export const PostForm = ({
       title: post?.title ?? '',
       topicId: post?.topicId ?? initialTopicId,
       blocks: post?.blocks?.length
-        ? post.blocks.map((block) => ({
-            blockId: String(block.id),
-            type: block.type,
-            content: block.content,
-            codeLanguage: block.codeLanguage ?? 'typescript',
-            imageUrl: block.imageUrl ?? '',
+        ? post.blocks.map(({ id, type, content, codeLanguage, imageUrl }) => ({
+            blockId: String(id),
+            type,
+            content,
+            codeLanguage: codeLanguage ?? 'typescript',
+            imageUrl: imageUrl ?? '',
           }))
         : [
             { ...newBlock('heading'), blockId: initialHeadingBlockId },

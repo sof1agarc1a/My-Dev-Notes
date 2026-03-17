@@ -26,15 +26,7 @@ import { CodeBlock } from '@/components/CodeBlock'
 import { Separator } from '@/components/ui/separator'
 import { useUploadThing } from '@/lib/uploadthing'
 import imageCompression from 'browser-image-compression'
-import { BlockType } from '@/lib/api'
-
-export interface BlockDraft {
-  blockId: string
-  type: BlockType
-  content: string
-  codeLanguage: string
-  imageUrl: string
-}
+import { BlockDraft, codeLanguages } from '@/lib/utils'
 
 interface FormValues {
   title: string
@@ -48,21 +40,6 @@ interface BlockFormItemProps {
   provided: DraggableProvided
   onRemove: () => void
 }
-
-const codeLanguages = [
-  { value: 'typescript', label: 'TypeScript' },
-  { value: 'javascript', label: 'JavaScript' },
-  { value: 'python', label: 'Python' },
-  { value: 'bash', label: 'Bash' },
-  { value: 'sql', label: 'SQL' },
-  { value: 'json', label: 'JSON' },
-  { value: 'html', label: 'HTML' },
-  { value: 'css', label: 'CSS' },
-  { value: 'go', label: 'Go' },
-  { value: 'rust', label: 'Rust' },
-  { value: 'java', label: 'Java' },
-  { value: 'yaml', label: 'YAML' },
-]
 
 export const BlockFormItem = ({ control, index, provided, onRemove }: BlockFormItemProps) => {
   const [richEditor, setRichEditor] = useState<Editor | null>(null)

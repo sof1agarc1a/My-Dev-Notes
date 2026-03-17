@@ -15,21 +15,7 @@ import {
   ListOrdered,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
-
-function parseContent(value: string) {
-  if (!value) {
-    return null
-  }
-  try {
-    return JSON.parse(value)
-  } catch {
-    return {
-      type: 'doc',
-      content: [{ type: 'paragraph', content: [{ type: 'text', text: value }] }],
-    }
-  }
-}
+import { cn, parseContent } from '@/lib/utils'
 
 interface ToolbarButtonProps {
   onClick: () => void

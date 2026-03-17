@@ -1,20 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import hljs from 'highlight.js'
-import createDOMPurify from 'dompurify'
 import { Button } from '@/components/ui/button'
 import { Code, Copy, Check } from 'lucide-react'
-
-const DOMPurify = typeof window !== 'undefined' ? createDOMPurify(window) : null
-
-export const highlightCode = (code: string, language: string | null): string => {
-  try {
-    return hljs.highlight(code, { language: language ?? 'plaintext' }).value
-  } catch {
-    return hljs.highlightAuto(code).value
-  }
-}
+import { highlightCode, DOMPurify } from '@/lib/utils'
 
 interface CodeBlockProps {
   code: string
