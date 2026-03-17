@@ -33,15 +33,15 @@ export const PostView = ({ post, topics, onEdit }: PostViewProps) => {
         <div className="min-w-0">
           {topicName && (
             <div className="h-12 flex items-center">
-              <Text as="p" size="sm" className="text-muted-foreground">
+              <Text as="p" size="sm" color="muted">
                 {topicName}
               </Text>
             </div>
           )}
-          <Heading as="h1" size="xl" className="text-foreground mt-4">
+          <Heading as="h1" size="xl" className="mt-4">
             {post.title}
           </Heading>
-          <Text as="p" size="sm" className="text-muted-foreground mt-3">
+          <Text as="p" size="sm" color="muted" className="mt-3">
             Last updated · {updatedAt}
           </Text>
         </div>
@@ -59,7 +59,7 @@ export const PostView = ({ post, topics, onEdit }: PostViewProps) => {
         {post.blocks.map((block) => {
           if (block.type === 'heading' && block.content) {
             return (
-              <Heading key={block.id} as="h2" size="md" className="text-foreground">
+              <Heading key={block.id} as="h2" size="md">
                 {block.content}
               </Heading>
             )

@@ -110,11 +110,7 @@ export const BlockFormItem = ({ control, index, provided, onRemove }: BlockFormI
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-1.5">
             <Heading size={13} className="text-muted-foreground" />
-            <Text
-              as="span"
-              size="xs"
-              className="text-muted-foreground font-semibold uppercase tracking-widest leading-none"
-            >
+            <Text as="span" size="xs" variant="tag">
               Heading
             </Text>
           </div>
@@ -138,11 +134,7 @@ export const BlockFormItem = ({ control, index, provided, onRemove }: BlockFormI
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5">
               <AlignLeft size={13} className="text-muted-foreground" />
-              <Text
-                as="span"
-                size="xs"
-                className="text-muted-foreground font-semibold uppercase tracking-widest leading-none"
-              >
+              <Text as="span" size="xs" variant="tag">
                 Content
               </Text>
             </div>
@@ -168,11 +160,7 @@ export const BlockFormItem = ({ control, index, provided, onRemove }: BlockFormI
           <div className="flex items-center justify-between h-6">
             <div className="flex items-center gap-1.5">
               <Code size={13} className="text-muted-foreground" />
-              <Text
-                as="span"
-                size="xs"
-                className="text-muted-foreground font-semibold uppercase tracking-widest leading-none"
-              >
+              <Text as="span" size="xs" variant="tag">
                 Code snippet
               </Text>
             </div>
@@ -223,11 +211,7 @@ export const BlockFormItem = ({ control, index, provided, onRemove }: BlockFormI
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-1.5">
                 <ImageBlockIcon size={13} className="text-muted-foreground" />
-                <Text
-                  as="span"
-                  size="xs"
-                  className="text-muted-foreground font-semibold uppercase tracking-widest leading-none"
-                >
+                <Text as="span" size="xs" variant="tag">
                   Image
                 </Text>
               </div>

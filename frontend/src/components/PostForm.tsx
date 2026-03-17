@@ -252,7 +252,7 @@ export const PostForm = ({
           <div className="min-w-0 flex-1">
             {topics.length > 0 && (
               <div className="flex items-center gap-3">
-                <Text as="span" size="sm" className="text-muted-foreground shrink-0">
+                <Text as="span" size="sm" color="muted" className="shrink-0">
                   Topic ·
                 </Text>
                 <Controller
@@ -267,9 +267,7 @@ export const PostForm = ({
                         <Text
                           as="span"
                           size="sm"
-                          className={
-                            field.value !== null ? 'text-foreground' : 'text-muted-foreground'
-                          }
+                          color={field.value !== null ? 'foreground' : 'muted'}
                         >
                           {field.value !== null
                             ? (topics.find((topic) => topic.id === field.value)?.name ??
@@ -321,7 +319,7 @@ export const PostForm = ({
         </div>
 
         {errors.root && (
-          <Text as="p" size="sm" className="text-destructive mb-6">
+          <Text as="p" size="sm" color="destructive" className="mb-6">
             {errors.root.message}
           </Text>
         )}
@@ -358,11 +356,7 @@ export const PostForm = ({
           <div className="flex items-center gap-1.5 mt-12">
             <LayoutGrid size={13} className="text-muted-foreground" />
 
-            <Text
-              as="span"
-              size="xs"
-              className="text-muted-foreground font-semibold uppercase tracking-widest leading-none"
-            >
+            <Text as="span" size="xs" variant="tag">
               Add block
             </Text>
           </div>

@@ -7,10 +7,10 @@ import { PenLine } from 'lucide-react'
 export default function HomePage() {
   return (
     <div className="flex flex-col items-center justify-start h-full text-center px-8 pt-[30vh]">
-      <Heading as="h1" size="lg" className="text-foreground/80 mb-4">
+      <Heading as="h1" size="lg" className="mb-4">
         Welcome to My Notes
       </Heading>
-      <Text as="p" size="lg" className="text-muted-foreground mb-8 max-w-xs">
+      <Text as="p" size="lg" color="muted" className="mb-8 max-w-xs">
         Select a page from the sidebar, or create a new one to get started.
       </Text>
       <Link href="/posts/new">

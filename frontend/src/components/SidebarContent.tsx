@@ -141,7 +141,8 @@ export const SidebarContent = ({ initialTopics, ungrouped }: SidebarContentProps
                           <Text
                             as="p"
                             size="xs"
-                            className="font-semibold text-sidebar-foreground/60 uppercase tracking-widest truncate"
+                            variant="tag"
+                            className="text-sidebar-foreground/60 truncate"
                           >
                             {topic.name}
                           </Text>
@@ -161,11 +162,7 @@ export const SidebarContent = ({ initialTopics, ungrouped }: SidebarContentProps
                             className="flex flex-col gap-0.5"
                           >
                             {topic.posts.length === 0 ? (
-                              <Text
-                                as="p"
-                                size="sm"
-                                className="text-sidebar-foreground/40 pl-8 py-1.5 italic"
-                              >
+                              <Text as="p" size="sm" color="muted" className="pl-8 py-1.5 italic">
                                 No pages yet
                               </Text>
                             ) : (
@@ -208,7 +205,7 @@ export const SidebarContent = ({ initialTopics, ungrouped }: SidebarContentProps
 
                       <Link
                         href={`/posts/new?topicId=${topic.id}`}
-                        className="mt-1 opacity-0 group-hover/topic:opacity-100 transition-opacity flex items-center gap-1.5 pl-8 pr-2 py-1 text-xs text-sidebar-foreground/40 hover:text-sidebar-foreground"
+                        className="mt-1 opacity-0 group-hover/topic:opacity-100 transition-opacity flex items-center gap-1.5 pl-8 pr-2 py-1 text-xs text-muted-foreground hover:text-sidebar-foreground"
                       >
                         <Plus size={14} />
                         New page
@@ -224,7 +221,7 @@ export const SidebarContent = ({ initialTopics, ungrouped }: SidebarContentProps
       </Droppable>
 
       {topics.length === 0 && ungrouped.length === 0 && (
-        <Text as="p" size="sm" className="ml-2 text-sidebar-foreground/40 px-2 py-1 italic">
+        <Text as="p" size="sm" color="muted" className="ml-2 px-2 py-1 italic">
           No topics added yet
         </Text>
       )}
@@ -246,7 +243,8 @@ export const SidebarContent = ({ initialTopics, ungrouped }: SidebarContentProps
                 <Text
                   as="p"
                   size="xs"
-                  className="font-semibold text-sidebar-foreground/60 uppercase tracking-widest truncate"
+                  variant="tag"
+                  className="text-sidebar-foreground/60 truncate"
                 >
                   Ungrouped pages
                 </Text>
