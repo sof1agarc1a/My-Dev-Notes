@@ -27,12 +27,13 @@ export const DeleteTopicButton = ({ topicId }: { topicId: number }) => {
     <>
       <Button
         variant="transparent"
-        size="icon-sm"
+        size="icon"
         onClick={() => setOpen(true)}
-        className="mb-1 ml-2 opacity-0 group-hover/topic:opacity-60 transition-opacity"
+        className="mb-1 ml-2 opacity-0 group-hover/topic:opacity-70 transition-opacity"
       >
-        <X size={14} />
+        <X />
       </Button>
+
       <ConfirmDialog
         open={open}
         onOpenChange={setOpen}

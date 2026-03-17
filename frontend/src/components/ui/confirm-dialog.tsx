@@ -37,10 +37,10 @@ export const ConfirmDialog = ({
     <AlertDialog.Root open={open} onOpenChange={onOpenChange}>
       <AlertDialog.Portal>
         <AlertDialog.Backdrop
-          className="fixed inset-0 bg-black/40 z-50 transition-opacity duration-200 data-starting-style:opacity-0 data-ending-style:opacity-0"
+          className="fixed inset-0 bg-black/60 z-100 transition-opacity duration-200 data-starting-style:opacity-0 data-ending-style:opacity-0"
           onClick={() => onOpenChange(false)}
         />
-        <AlertDialog.Popup className="fixed left-1/2 top-[38%] -translate-x-1/2 -translate-y-1/2 z-50 bg-background rounded-lg p-6 shadow-xl w-full max-w-md transition-[opacity,transform,translate,scale] duration-100 ease-out data-starting-style:opacity-0 data-starting-style:[translate:-50%_calc(-50%+6px)] data-starting-style:scale-90 data-ending-style:opacity-0 data-ending-style:[translate:-50%_calc(-50%+6px)] data-ending-style:scale-90">
+        <AlertDialog.Popup className="fixed left-1/2 top-[38%] -translate-x-1/2 -translate-y-1/2 z-100 bg-background dark:bg-sidebar rounded-lg p-6 shadow-xl w-full max-w-md transition-[opacity,transform,translate,scale] duration-100 ease-out data-starting-style:opacity-0 data-starting-style:[translate:-50%_calc(-50%+6px)] data-starting-style:scale-90 data-ending-style:opacity-0 data-ending-style:[translate:-50%_calc(-50%+6px)] data-ending-style:scale-90">
           <AlertDialog.Title render={<div />}>
             <Heading as="h2" size="sm">
               {title}
@@ -55,23 +55,21 @@ export const ConfirmDialog = ({
             {showCancel && (
               <AlertDialog.Close
                 render={
-                  <Button variant="outline" disabled={loading}>
+                  <Button variant="outline" size="lg" disabled={loading}>
                     Cancel
                   </Button>
                 }
               />
             )}
-            <Button variant="destructive" onClick={onConfirm} disabled={loading}>
-              {showDeleteIcon && <Trash2 size={14} />}
+
+            <Button variant="destructive" size="lg" onClick={onConfirm} disabled={loading}>
+              {showDeleteIcon && <Trash2 />}
               {confirmLabel}
             </Button>
+
             {onSave && (
-              <Button
-                className="bg-brand hover:bg-brand-hover text-brand-foreground"
-                onClick={onSave}
-                disabled={loading}
-              >
-                <Save size={14} />
+              <Button variant="primary" size="lg" onClick={onSave} disabled={loading}>
+                <Save />
                 {saveLabel}
               </Button>
             )}

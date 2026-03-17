@@ -42,7 +42,7 @@ export const CreateTopicButton = () => {
 
   if (open) {
     return (
-      <form onSubmit={handleSubmit} className="flex items-center gap-1 px-2">
+      <form onSubmit={handleSubmit} className="flex items-center gap-1 px-2 h-9">
         <Input
           autoFocus
           value={name}
@@ -51,7 +51,7 @@ export const CreateTopicButton = () => {
           placeholder="Topic name..."
           className="flex-1 min-w-0 h-auto bg-transparent text-[13px] text-sidebar-foreground placeholder:text-sidebar-foreground/40 border-0 border-b border-sidebar-foreground/30 rounded-none px-0 py-0.5 shadow-none focus-visible:ring-0"
         />
-        <Button type="button" variant="destructive" size="xs" onClick={handleCancel}>
+        <Button variant="destructive" size="xs" onClick={handleCancel}>
           Cancel
         </Button>
         <Button type="submit" variant="primary" size="xs" disabled={loading || !name.trim()}>
@@ -62,12 +62,8 @@ export const CreateTopicButton = () => {
   }
 
   return (
-    <Button
-      variant="primary"
-      onClick={() => setOpen(true)}
-      className="flex justify-start gap-2.5 px-2 py-1.5 h-auto w-full text-[15px] font-medium"
-    >
-      <Plus size={16} />
+    <Button isWide variant="primary" size="md" onClick={() => setOpen(true)}>
+      <Plus />
       New topic
     </Button>
   )

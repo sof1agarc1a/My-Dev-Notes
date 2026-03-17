@@ -2,6 +2,8 @@ import Link from 'next/link'
 import { BookOpen, Plus } from 'lucide-react'
 import { SidebarContent } from '@/components/SidebarContent'
 import { DarkModeToggle } from '@/components/DarkModeToggle'
+import { CreateTopicButton } from '@/components/CreateTopicButton'
+import { Button } from '@/components/ui/button'
 import { Text } from '@/components/typography/Text'
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001/api'
@@ -52,21 +54,20 @@ export const Sidebar = async () => {
       </div>
 
       <div className="mx-5 pt-3 pb-3 border-b border-sidebar-border">
-        <Link
-          href="/posts/new"
-          className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-[15px] font-medium text-brand-foreground bg-brand hover:bg-brand-hover transition-colors cursor-pointer w-full"
-        >
-          <Plus size={16} className="shrink-0" />
-          <Text as="span" size="sm">
-            New page
-          </Text>
-        </Link>
+        <Button variant="primary" size="md" isWide render={<Link href="/posts/new" />}>
+          <Plus />
+          New page
+        </Button>
       </div>
 
-      <div className="relative flex-1 min-h-0">
-        <nav className="h-full overflow-y-auto scrollbar-hidden px-4 pl-2 pb-40 mt-6">
+      <div className="flex-1 min-h-0 overflow-y-auto scrollbar-hidden">
+        <nav className="pr-4 pl-2 py-8">
           <SidebarContent initialTopics={topics} ungrouped={ungrouped} />
         </nav>
+      </div>
+
+      <div className="mx-5 py-4 border-t border-sidebar-border pb-12">
+        <CreateTopicButton />
       </div>
     </aside>
   )

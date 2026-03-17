@@ -2,6 +2,7 @@
 'use client'
 
 import { Control, Controller, useWatch } from 'react-hook-form'
+import { useState } from 'react'
 import { DraggableProvided } from '@hello-pangea/dnd'
 import {
   GripVertical,
@@ -19,7 +20,8 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Text } from '@/components/typography/Text'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@/components/ui/select'
-import { RichTextEditor } from '@/components/RichTextEditor'
+import { RichTextEditor, RichTextToolbar } from '@/components/RichTextEditor'
+import { Editor } from '@tiptap/react'
 import { CodeBlock } from '@/components/CodeBlock'
 import { Separator } from '@/components/ui/separator'
 import { useUploadThing } from '@/lib/uploadthing'
@@ -63,6 +65,7 @@ const codeLanguages = [
 ]
 
 export const BlockFormItem = ({ control, index, provided, onRemove }: BlockFormItemProps) => {
+  const [richEditor, setRichEditor] = useState<Editor | null>(null)
   const type = useWatch({ control, name: `blocks.${index}.type` })
   const codeValue = useWatch({ control, name: `blocks.${index}.content` })
   const codeLanguageValue = useWatch({ control, name: `blocks.${index}.codeLanguage` })
@@ -95,11 +98,10 @@ export const BlockFormItem = ({ control, index, provided, onRemove }: BlockFormI
       </div>
 
       <Button
-        type="button"
         variant="destructive"
         size="icon"
         onClick={onRemove}
-        className="absolute -right-14 top-0 h-8 w-8 rounded-full opacity-0 group-hover/block:opacity-100 transition-opacity"
+        className="absolute -right-14 top-0 opacity-0 group-hover/block:opacity-100 transition-opacity"
       >
         <Trash2 size={14} />
       </Button>
@@ -133,15 +135,18 @@ export const BlockFormItem = ({ control, index, provided, onRemove }: BlockFormI
 
       {type === 'text' && (
         <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-1.5">
-            <AlignLeft size={13} className="text-muted-foreground" />
-            <Text
-              as="span"
-              size="xs"
-              className="text-muted-foreground font-semibold uppercase tracking-widest leading-none"
-            >
-              Content
-            </Text>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-1.5">
+              <AlignLeft size={13} className="text-muted-foreground" />
+              <Text
+                as="span"
+                size="xs"
+                className="text-muted-foreground font-semibold uppercase tracking-widest leading-none"
+              >
+                Content
+              </Text>
+            </div>
+            <RichTextToolbar editor={richEditor} />
           </div>
           <Controller
             control={control}
@@ -150,7 +155,8 @@ export const BlockFormItem = ({ control, index, provided, onRemove }: BlockFormI
               <RichTextEditor
                 value={field.value}
                 onChange={field.onChange}
-                className="text-base leading-6.5 text-foreground/75 hover:ring-1 hover:ring-inset hover:ring-border focus-within:ring-1 focus-within:ring-inset focus-within:ring-ring px-3 py-2 rounded-lg -ml-3 w-[calc(100%+1.5rem)]"
+                onEditorReady={setRichEditor}
+                className="min-h-36 text-base leading-6.5 text-foreground/75 hover:ring-1 hover:ring-inset hover:ring-border focus-within:ring-1 focus-within:ring-inset focus-within:ring-ring px-3 py-2 rounded-lg -ml-3 w-[calc(100%+1.5rem)]"
               />
             )}
           />

@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
 
 interface SidebarNavLinkProps {
   href: string
@@ -15,15 +16,19 @@ export const SidebarNavLink = ({ href, children, className }: SidebarNavLinkProp
   const isActive = pathname === href || pathname.startsWith(`${href}/`)
 
   return (
-    <Link
-      href={href}
+    <Button
+      variant="secondary"
+      size="sm"
+      render={<Link href={href} />}
       className={cn(
-        'flex items-center gap-2.5 px-2 py-1.5 mr-5 rounded-lg text-[15px] transition-colors w-full',
+        'justify-start gap-2.5 mr-4',
         className,
-        isActive ? 'bg-brand text-brand-foreground' : 'text-sidebar-foreground hover:bg-brand/60'
+        isActive
+          ? 'bg-brand text-brand-foreground hover:bg-brand! hover:text-brand-foreground!'
+          : ''
       )}
     >
       {children}
-    </Link>
+    </Button>
   )
 }

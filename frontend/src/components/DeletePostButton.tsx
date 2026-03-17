@@ -26,19 +26,15 @@ export const DeletePostButton = ({ postId }: { postId: number }) => {
 
   return (
     <>
-      <Button
-        variant="destructive"
-        size="icon"
-        onClick={() => setOpen(true)}
-        className="h-9 w-9 rounded-full"
-      >
-        <Trash2 size={15} />
+      <Button variant="destructive" size="icon" onClick={() => setOpen(true)}>
+        <Trash2 />
       </Button>
+
       <ConfirmDialog
         open={open}
         onOpenChange={setOpen}
-        title="Delete post?"
-        description="This cannot be undone."
+        title="Delete page?"
+        description="This will permanently delete the page."
         onConfirm={handleConfirm}
         loading={loading}
       />

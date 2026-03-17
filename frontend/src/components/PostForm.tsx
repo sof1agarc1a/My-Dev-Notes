@@ -58,7 +58,6 @@ export const PostForm = ({
   const initialHeadingBlockId = useId()
   const initialTextBlockId = useId()
   const initialCodeBlockId = useId()
-  const initialImageBlockId = useId()
 
   const {
     register,
@@ -82,7 +81,6 @@ export const PostForm = ({
             { ...newBlock('heading'), blockId: initialHeadingBlockId },
             { ...newBlock('text'), blockId: initialTextBlockId },
             { ...newBlock('code'), blockId: initialCodeBlockId },
-            { ...newBlock('image'), blockId: initialImageBlockId },
           ],
     },
   })
@@ -302,29 +300,19 @@ export const PostForm = ({
           </div>
 
           <div className="flex items-center gap-1.5 shrink-0 mt-1">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={handleCancel}
-              className="text-foreground bg-muted hover:bg-muted/70"
-            >
+            <Button variant="outline" size="sm" onClick={handleCancel}>
               Cancel
             </Button>
-            <Button
-              type="submit"
-              size="sm"
-              disabled={!isDirty || isSubmitting}
-              className="bg-brand hover:bg-brand-hover text-brand-foreground gap-1.5 disabled:opacity-40"
-            >
+
+            <Button type="submit" variant="primary" size="sm" disabled={!isDirty || isSubmitting}>
               {post ? (
                 <>
-                  <Save size={14} />
+                  <Save />
                   Save changes
                 </>
               ) : (
                 <>
-                  <FilePlus size={14} />
+                  <FilePlus />
                   Create page
                 </>
               )}
@@ -364,10 +352,12 @@ export const PostForm = ({
           </Droppable>
         </DragDropContext>
 
-        <div className="flex flex-col gap-3 mt-10">
+        <div className="flex flex-col gap-3 mt-12">
           <Separator />
+
           <div className="flex items-center gap-1.5 mt-12">
             <LayoutGrid size={13} className="text-muted-foreground" />
+
             <Text
               as="span"
               size="xs"
@@ -376,55 +366,30 @@ export const PostForm = ({
               Add block
             </Text>
           </div>
+
           <div className="flex items-center gap-2 flex-wrap">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => append(newBlock('heading'))}
-              className="gap-1.5"
-            >
-              <Heading size={13} />
+            <Button variant="outline" size="sm" onClick={() => append(newBlock('heading'))}>
+              <Heading />
               Heading
             </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => append(newBlock('text'))}
-              className="gap-1.5"
-            >
-              <AlignLeft size={13} />
+
+            <Button variant="outline" size="sm" onClick={() => append(newBlock('text'))}>
+              <AlignLeft />
               Content
             </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => append(newBlock('code'))}
-              className="gap-1.5"
-            >
-              <Code size={13} />
+
+            <Button variant="outline" size="sm" onClick={() => append(newBlock('code'))}>
+              <Code />
               Code
             </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => append(newBlock('image'))}
-              className="gap-1.5"
-            >
-              <ImageIcon size={13} />
+
+            <Button variant="outline" size="sm" onClick={() => append(newBlock('image'))}>
+              <ImageIcon />
               Image
             </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => append(newBlock('divider'))}
-              className="gap-1.5"
-            >
-              <Minus size={13} />
+
+            <Button variant="outline" size="sm" onClick={() => append(newBlock('divider'))}>
+              <Minus />
               Divider
             </Button>
           </div>

@@ -14,8 +14,8 @@ export default function HomePage() {
         Select a page from the sidebar, or create a new one to get started.
       </Text>
       <Link href="/posts/new">
-        <Button variant="outline">
-          <PenLine size={15} className="mr-2" />
+        <Button variant="outline" size="lg">
+          <PenLine />
           New page
         </Button>
       </Link>

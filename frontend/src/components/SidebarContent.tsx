@@ -8,7 +8,6 @@ import { GripVertical } from 'lucide-react'
 import { api } from '@/lib/api'
 import { Button } from '@/components/ui/button'
 import { SidebarNavLink } from '@/components/SidebarNavLink'
-import { CreateTopicButton } from '@/components/CreateTopicButton'
 import { DeleteTopicButton } from '@/components/DeleteTopicButton'
 import { Text } from '@/components/typography/Text'
 
@@ -122,7 +121,7 @@ export const SidebarContent = ({ initialTopics, ungrouped }: SidebarContentProps
                     {...topicDraggable.draggableProps}
                     className="group/topic"
                   >
-                    <div className="flex items-center justify-between px-2 py-1 mb-0.5">
+                    <div className="flex items-center justify-between px-2 py-1">
                       <div className="flex items-center gap-2 min-w-0 flex-1">
                         <div
                           {...topicDraggable.dragHandleProps}
@@ -131,14 +130,13 @@ export const SidebarContent = ({ initialTopics, ungrouped }: SidebarContentProps
                           <GripVertical size={14} />
                         </div>
                         <Button
-                          type="button"
                           variant="transparent"
+                          size="md"
                           onClick={() => toggleTopic(topic.id)}
-                          className="flex items-center justify-start gap-1.5 min-w-0 flex-1 h-auto p-0 active:translate-y-0"
+                          className="justify-start p-0 active:translate-y-0"
                         >
                           <ChevronRight
-                            size={13}
-                            className={`shrink-0 text-sidebar-foreground/40 transition-transform duration-200 ease-in-out ${collapsedTopics.has(topic.id) ? '' : 'rotate-90'}`}
+                            className={`text-sidebar-foreground/60 transition-transform duration-200 ease-in-out ${collapsedTopics.has(topic.id) ? '' : 'rotate-90'}`}
                           />
                           <Text
                             as="p"
@@ -181,7 +179,7 @@ export const SidebarContent = ({ initialTopics, ungrouped }: SidebarContentProps
                                     <div
                                       ref={postDraggable.innerRef}
                                       {...postDraggable.draggableProps}
-                                      className="group/post flex items-center gap-1"
+                                      className="group/post flex items-center gap-2"
                                     >
                                       <div
                                         {...postDraggable.dragHandleProps}
@@ -191,7 +189,7 @@ export const SidebarContent = ({ initialTopics, ungrouped }: SidebarContentProps
                                       </div>
                                       <SidebarNavLink
                                         href={`/posts/${post.id}`}
-                                        className="flex-1 min-w-0"
+                                        className="flex-1 min-w-0 -ml-1.5"
                                       >
                                         <FileText size={15} className="shrink-0 opacity-70" />
                                         <Text as="span" size="sm" className="truncate">
@@ -210,7 +208,7 @@ export const SidebarContent = ({ initialTopics, ungrouped }: SidebarContentProps
 
                       <Link
                         href={`/posts/new?topicId=${topic.id}`}
-                        className="mt-1 opacity-0 group-hover/topic:opacity-100 transition-opacity flex items-center gap-1.5 pl-8 pr-2 py-1 text-[13px] text-sidebar-foreground/40 hover:text-sidebar-foreground"
+                        className="mt-1 opacity-0 group-hover/topic:opacity-100 transition-opacity flex items-center gap-1.5 pl-8 pr-2 py-1 text-xs text-sidebar-foreground/40 hover:text-sidebar-foreground"
                       >
                         <Plus size={14} />
                         New page
@@ -233,18 +231,17 @@ export const SidebarContent = ({ initialTopics, ungrouped }: SidebarContentProps
 
       {ungrouped.length > 0 && (
         <div>
-          <div className="flex items-center justify-between px-2 py-1 mb-0.5">
+          <div className="flex items-center justify-between px-2 py-1">
             <div className="flex items-center gap-2 min-w-0 flex-1">
               <div className="w-3.5 shrink-0 -ml-1" />
               <Button
-                type="button"
                 variant="transparent"
+                size="md"
                 onClick={() => setUngroupedCollapsed((prev) => !prev)}
-                className="flex items-center justify-start gap-1.5 min-w-0 flex-1 h-auto p-0 active:translate-y-0"
+                className="justify-start p-0 active:translate-y-0"
               >
                 <ChevronRight
-                  size={13}
-                  className={`shrink-0 text-sidebar-foreground/40 transition-transform duration-200 ease-in-out ${ungroupedCollapsed ? '' : 'rotate-90'}`}
+                  className={`text-sidebar-foreground/60 transition-transform duration-200 ease-in-out ${ungroupedCollapsed ? '' : 'rotate-90'}`}
                 />
                 <Text
                   as="p"
@@ -273,10 +270,6 @@ export const SidebarContent = ({ initialTopics, ungrouped }: SidebarContentProps
           </div>
         </div>
       )}
-
-      <div className="pt-3 mt-8 ml-3 mr-1 flex flex-col gap-0.5 border-t border-sidebar-border items-start">
-        <CreateTopicButton />
-      </div>
     </DragDropContext>
   )
 }
