@@ -2,31 +2,27 @@ pre-commit:
   parallel: true
   commands:
     frontend-lint:
-      root: "frontend/"
-      glob: "src/**/*.{ts,tsx}"
-      run: npx eslint --max-warnings=0 {staged_files}
+      glob: "frontend/src/**/*.{ts,tsx}"
+      run: frontend/node_modules/.bin/eslint --config frontend/eslint.config.mjs --max-warnings=0 {staged_files}
 
     frontend-typecheck:
-      root: "frontend/"
-      glob: "src/**/*.{ts,tsx}"
-      run: npm run typecheck
+      glob: "frontend/src/**/*.{ts,tsx}"
+      run: cd frontend && ./node_modules/.bin/tsc --noEmit
 
     frontend-format:
-      root: "frontend/"
-      glob: "src/**/*.{ts,tsx,css,json}"
-      run: npx prettier --check {staged_files}
+      glob: "frontend/src/**/*.{ts,tsx,css,json}"
+      run: frontend/node_modules/.bin/prettier --write {staged_files}
+      stage_fixed: true
 
     backend-lint:
-      root: "backend/"
-      glob: "src/**/*.ts"
-      run: npx eslint {staged_files}
+      glob: "backend/src/**/*.ts"
+      run: backend/node_modules/.bin/eslint --config backend/eslint.config.mjs {staged_files}
 
     backend-typecheck:
-      root: "backend/"
-      glob: "src/**/*.ts"
-      run: npm run typecheck
+      glob: "backend/src/**/*.ts"
+      run: cd backend && ./node_modules/.bin/tsc --noEmit
 
     backend-format:
-      root: "backend/"
-      glob: "src/**/*.{ts,json}"
-      run: npx prettier --check {staged_files}
+      glob: "backend/src/**/*.{ts,json}"
+      run: backend/node_modules/.bin/prettier --write {staged_files}
+      stage_fixed: true
