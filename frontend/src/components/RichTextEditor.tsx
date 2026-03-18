@@ -132,7 +132,7 @@ export const RichTextEditor = ({
   value,
   onChange,
   onEditorReady,
-  placeholder = 'Write something...',
+  placeholder = 'Add content here...',
   className,
 }: RichTextEditorProps) => {
   const editor = useEditor({
@@ -150,7 +150,7 @@ export const RichTextEditor = ({
       onChange(e.isEmpty ? '' : JSON.stringify(e.getJSON()))
     },
     editorProps: {
-      attributes: { class: 'outline-none' },
+      attributes: { class: 'outline-none', 'aria-label': placeholder },
     },
   })
 

@@ -11,6 +11,7 @@ export const DarkModeToggle = () => {
     <Button
       variant="secondary"
       size="icon"
+      aria-label={resolvedTheme === 'dark' ? 'Light mode' : 'Dark mode'}
       onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
       className="group"
     >

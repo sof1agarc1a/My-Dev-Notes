@@ -49,7 +49,7 @@ export const PostView = ({ post, topics, onEdit }: PostViewProps) => {
         </div>
 
         <div className="flex items-center gap-1.5 shrink-0 mt-1">
-          <Button variant="secondary" size="icon" onClick={onEdit}>
+          <Button variant="secondary" size="icon" aria-label="Edit post" onClick={onEdit}>
             <Pencil className="dark:text-brand" />
           </Button>
 
@@ -87,7 +87,9 @@ export const PostView = ({ post, topics, onEdit }: PostViewProps) => {
                 alt="Block image"
                 width={0}
                 height={0}
-                sizes="100vw"
+                loading="eager"
+                fetchPriority="high"
+                sizes="(max-width: 640px) 100vw, (max-width: 1280px) 75vw, 60vw"
                 className="w-full h-auto rounded-lg border border-border"
               />
             )

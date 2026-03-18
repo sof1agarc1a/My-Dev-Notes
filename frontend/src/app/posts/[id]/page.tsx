@@ -2,8 +2,6 @@ import { notFound } from 'next/navigation'
 import { api } from '@/lib/api'
 import { PostPageContent } from '@/components/PostPageContent'
 
-export const dynamic = 'force-dynamic'
-
 interface Props {
   params: Promise<{ id: string }>
 }

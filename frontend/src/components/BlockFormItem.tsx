@@ -77,6 +77,7 @@ export const BlockFormItem = ({ control, index, provided, onRemove }: BlockFormI
       <Button
         variant="destructive"
         size="icon"
+        aria-label={`Remove ${type} block`}
         onClick={onRemove}
         className="absolute -right-14 top-0 opacity-0 group-hover/block:opacity-100 transition-opacity"
       >
@@ -108,7 +109,7 @@ export const BlockFormItem = ({ control, index, provided, onRemove }: BlockFormI
 
       {type === 'text' && (
         <div className="flex flex-col gap-2">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between h-9">
             <div className="flex items-center gap-1.5">
               <AlignLeft size={13} className="text-muted-foreground" />
               <Text as="span" size="xs" variant="tag">
@@ -198,7 +199,9 @@ export const BlockFormItem = ({ control, index, provided, onRemove }: BlockFormI
                     alt="Block image"
                     width={0}
                     height={0}
-                    sizes="100vw"
+                    loading="eager"
+                    fetchPriority="high"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1280px) 75vw, 60vw"
                     className="w-full h-auto"
                   />
                 </div>

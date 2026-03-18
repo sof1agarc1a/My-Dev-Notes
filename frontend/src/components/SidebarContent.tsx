@@ -128,6 +128,7 @@ export const SidebarContent = ({ initialTopics, ungrouped }: SidebarContentProps
                         <div className="flex items-center gap-2 min-w-0 flex-1">
                           <div
                             {...topicDraggable.dragHandleProps}
+                            aria-label={`Drag to reorder ${name}`}
                             className="text-sidebar-foreground/0 group-hover/topic:text-sidebar-foreground/40 hover:text-sidebar-foreground/70! cursor-grab active:cursor-grabbing transition-colors shrink-0 -ml-1"
                           >
                             <GripVertical size={14} />
@@ -183,6 +184,7 @@ export const SidebarContent = ({ initialTopics, ungrouped }: SidebarContentProps
                                       >
                                         <div
                                           {...postDraggable.dragHandleProps}
+                                          aria-label={`Drag to reorder ${postTitle}`}
                                           className="text-sidebar-foreground/0 group-hover/post:text-sidebar-foreground/30 hover:text-sidebar-foreground/60! cursor-grab active:cursor-grabbing transition-colors shrink-0 pl-2"
                                         >
                                           <GripVertical size={13} />
@@ -208,6 +210,7 @@ export const SidebarContent = ({ initialTopics, ungrouped }: SidebarContentProps
 
                         <Link
                           href={`/posts/new?topicId=${topicId}`}
+                          aria-label={`New page in ${name}`}
                           className="mt-1 opacity-0 group-hover/topic:opacity-100 transition-opacity flex items-center gap-1.5 pl-8 pr-2 py-1 text-xs text-muted-foreground hover:text-sidebar-foreground"
                         >
                           <Plus size={14} />

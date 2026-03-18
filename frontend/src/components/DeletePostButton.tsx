@@ -26,7 +26,12 @@ export const DeletePostButton = ({ postId }: { postId: number }) => {
 
   return (
     <>
-      <Button variant="destructive" size="icon" onClick={() => setOpen(true)}>
+      <Button
+        variant="destructive"
+        size="icon"
+        aria-label="Delete page"
+        onClick={() => setOpen(true)}
+      >
         <Trash2 />
       </Button>
 

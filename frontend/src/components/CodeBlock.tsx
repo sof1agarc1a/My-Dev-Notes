@@ -23,7 +23,7 @@ export const CodeBlock = ({ code, codeLanguage }: CodeBlockProps) => {
     <div className="relative group/code">
       <div className="absolute top-2.5 right-3 flex items-center gap-2 z-10">
         <Code size={13} className="text-muted-foreground/50" />
-        <Button variant="secondary" size="icon" onClick={handleCopy}>
+        <Button variant="secondary" size="icon" aria-label="Copy code" onClick={handleCopy}>
           {copied ? <Check /> : <Copy />}
         </Button>
       </div>

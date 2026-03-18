@@ -1,8 +1,6 @@
 import { api } from '@/lib/api'
 import { PostForm } from '@/components/PostForm'
 
-export const dynamic = 'force-dynamic'
-
 interface Props {
   searchParams: Promise<{ topicId?: string }>
 }
